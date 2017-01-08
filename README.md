@@ -1,15 +1,15 @@
 # Home-security-application
 
 # Installing node modules
-npm install
+<p>npm install</p>
 
 # Webpack build
-npm start (to start live-server for development)
-npm run build-dev
-npm run build-prod
+<p>npm start (to start live-server for development)</p>
+<p>npm run build-dev</p>
+<p>npm run build-prod</p>
 
 # Cordova build
-cordova prepare (to prepare the added platforms and plugins)
-cordova build android
-cordova run android
-cordova run browser
+<p>cordova prepare (to prepare the added platforms and plugins)</p>
+<p>cordova build android</p>
+<p>cordova run android</p>
+<p>cordova run browser</p>

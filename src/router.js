@@ -5,9 +5,9 @@ import { routerUpdate } from './actions'
 
 import config from './config'
 
-import App from './components/App';
-import Login from './components/Login';
-import DevicesList from './components/DevicesList';
+import App from './containers/App';
+import Login from './containers/Login';
+import DevicesList from './containers/DevicesList';
 
 const onRouterUpdate = () => store.dispatch(routerUpdate(history.getCurrentLocation()))
 

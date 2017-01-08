@@ -3,6 +3,7 @@ import PahoMQTT from 'paho.mqtt.js'
 import { store } from '../store'
 import config from '../config'
 import * as actions from '../actions'
+import { user } from '../selectors'
 
 const _pahoMqttConnect = ({username, password}) => {
 	return new Promise ((resolve, reject) => {
@@ -11,8 +12,6 @@ const _pahoMqttConnect = ({username, password}) => {
 
 		client.onMessageArrived = (message) => {
 			const topicData = message.destinationName.split('/')
-
-			alert(message.payloadString)
 
 			store.dispatch(actions.messageArrived({
 				deviceId: topicData[0],
@@ -41,6 +40,9 @@ export function* connect(action) {
 		try {
 			const { client } = yield call(_pahoMqttConnect, action)
 
+			yield put(actions.userLogged({ username: action.username }))
+			yield put(actions.navigate(config.paths.devices))
+			
 			// get existing devices, subscribe to all
 			client.subscribe('test-node-01/#')
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import Modal from './common/Modal'
+import Modal from '../components/common/Modal'
 
 import { connect } from 'react-redux'
 import { connectMqtt } from '../actions'
@@ -33,16 +33,17 @@ class Login extends React.Component {
 		return (
 			<Modal class="login-modal-wrap">
 				<div className='login-form'>
-					<form type='POST'
-						onSubmit={this.onSubmit.bind(this)} >
-							
-							<label htmlFor='username'>username:</label>
-							<input type='text' id='username' name='username'
-								onChange={ this.onInputChange.bind(this, 'username') }/>
-							<label htmlFor='password'>password:</label>
-							<input type='password' id='password' name='password'
-								onChange={ this.onInputChange.bind(this, 'password') }/>
-
+					<form type='POST' onSubmit={this.onSubmit.bind(this)} >
+							<div>
+								<label htmlFor='username'>username:</label>
+								<input type='text' id='username' name='username'
+									onChange={ this.onInputChange.bind(this, 'username') }/>
+							</div>
+							<div>
+								<label htmlFor='password'>password:</label>
+								<input type='password' id='password' name='password'
+									onChange={ this.onInputChange.bind(this, 'password') }/>
+							</div>		
 							<input type='submit' value='login'/>
 					</form>
 				</div>
