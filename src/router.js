@@ -1,21 +1,24 @@
-import React from "react";
-import { Router, Route, IndexRoute } from "react-router";
-import { history } from "./store.js";
-import App from "./components/App";
-import Home from "./components/Home";
-import UserEdit from "./components/UserEdit";
-import NotFound from "./components/NotFound";
+import React from 'react';
+import { Router, Route, IndexRoute } from 'react-router';
+import { store, history } from './store.js';
+import { routerUpdate } from './actions'
 
-// build the router
+import config from './config'
+
+import App from './components/App';
+import Login from './components/Login';
+import DevicesList from './components/DevicesList';
+
+const onRouterUpdate = () => store.dispatch(routerUpdate(history.getCurrentLocation()))
+
 const router = (
-  <Router onUpdate={() => window.scrollTo(0, 0)} history={history}>
-    <Route path="/" component={App}>
-      <IndexRoute component={Home}/>
-      <Route path="user-edit(/:id)" component={UserEdit}/>
-      <Route path="*" component={NotFound}/>
-    </Route>
-  </Router>
-);
+	<Router history={ history } onUpdate={ onRouterUpdate }>
+		<Route path={ config.paths.login } component={ App } >
+			<IndexRoute component={ Login } />
+			<Route path={ config.paths.devices } component={ DevicesList } />
+			<Route path='*' component={ null } />
+		</Route>
+	</Router>
+)
 
-// export
 export { router };

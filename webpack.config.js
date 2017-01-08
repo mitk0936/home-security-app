@@ -1,5 +1,5 @@
 var app_root = 'src';
-var dist = '/dist';
+var dist = '/www';
 
 var path = require('path');
 var CleanWebpackPlugin = require('clean-webpack-plugin');
@@ -7,7 +7,7 @@ var CleanWebpackPlugin = require('clean-webpack-plugin');
 module.exports = {
 	app_root: app_root,
 	entry: [
-		'webpack-dev-server/client?http://localhost:8080',
+		'webpack-dev-server/client?http://localhost:8100',
 		'webpack/hot/only-dev-server',
 		'babel-polyfill',
 		__dirname + '/' + app_root + '/index.js',

@@ -1,11 +1,12 @@
 {
-  "name": "redux-minimal",
+  "name": "SecurityApp",
   "version": "1.0.0",
-  "description": "Application for monitoring home security",
+  "description": "Application for monitoring home and office security",
   "keywords": [
     "app",
     "hybrid",
     "home",
+    "office",
     "security",
     "mqtt"
   ],
@@ -14,7 +15,7 @@
     "url": "https://github.com/mitk0936/home-security-app"
   },
   "scripts": {
-    "start": "webpack-dev-server --inline --hot --history-api-fallback --host localhost --port 8080",
+    "start": "webpack-dev-server --inline --hot --history-api-fallback --host localhost --port 8100",
     "build-dev": "webpack --config webpack.dev.config.js",
     "build-prod": "webpack -p --config webpack.prod.config.js",
     "test": "mocha --recursive --compilers js:babel-register --require babel-polyfill --require ignore-styles",
@@ -33,16 +34,14 @@
   "author": "Dimitar Mihaylov",
   "license": "MIT",
   "dependencies": {
+    "cordova": "^6.4.0",
     "paho.mqtt.js": "^2.0.4",
     "react": "^15.4.1",
-    "react-bootstrap": "^0.30.7",
     "react-dom": "^15.4.1",
     "react-redux": "^4.4.6",
     "react-router": "^3.0.0",
-    "react-router-bootstrap": "^0.23.1",
     "react-router-redux": "^4.0.7",
     "redux": "^3.6.0",
-    "redux-form": "^6.3.2",
     "redux-saga": "^0.13.0"
   },
   "devDependencies": {
