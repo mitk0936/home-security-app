@@ -31,20 +31,20 @@ class Login extends React.Component {
 
 	render () {
 		return (
-			<Modal class="login-modal-wrap">
+			<Modal wrapperCssClass="login-modal-wrap">
 				<div className='login-form'>
 					<form type='POST' onSubmit={this.onSubmit.bind(this)} >
-							<div>
-								<label htmlFor='username'>username:</label>
-								<input type='text' id='username' name='username'
-									onChange={ this.onInputChange.bind(this, 'username') }/>
-							</div>
-							<div>
-								<label htmlFor='password'>password:</label>
-								<input type='password' id='password' name='password'
-									onChange={ this.onInputChange.bind(this, 'password') }/>
-							</div>		
-							<input type='submit' value='login'/>
+						<div>
+							<label htmlFor='username'>username:</label>
+							<input type='text' id='username' name='username'
+								onChange={ this.onInputChange.bind(this, 'username') }/>
+						</div>
+						<div>
+							<label htmlFor='password'>password:</label>
+							<input type='password' id='password' name='password'
+								onChange={ this.onInputChange.bind(this, 'password') }/>
+						</div>
+						<input type='submit' value='login'/>
 					</form>
 				</div>
 			</Modal>

@@ -6,6 +6,13 @@ const config = {
 	paths: {
 		login: '/',
 		devices: '/devices'
+	},
+	topics: {
+		data: {
+			'connectivity': 'connectivity',
+			'motion': 'motion',
+			'temp-hum': 'temperature-hummidity'
+		}
 	}
 }
 

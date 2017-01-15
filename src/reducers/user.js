@@ -15,7 +15,13 @@ export default function user (state = {
 			const { deviceId, topic, message } = action
 
 			return Object.assign({}, state, {
-				messages: [{ deviceId, topic, message }, ...state.messages]
+				messages: [...state.messages, { deviceId, topic, message }]
+			})
+		case actions.CONNECTION_LOST:
+		case actions.USER_LOGOUT:
+			return Object.assign({}, state, {
+				username: null,
+				logged: false
 			})
 	}
 
