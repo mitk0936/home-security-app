@@ -3,7 +3,7 @@ import * as actions from '../actions'
 export default function user (state = {
 	username: null,
 	logged: false,
-	messages: []
+	messages: {}
 }, action) {
 	switch (action.type) {
 		case actions.USER_LOGGED:
@@ -13,9 +13,18 @@ export default function user (state = {
 			})
 		case actions.MESSAGE_ARRIVED:
 			const { deviceId, topic, message } = action
+			const { value, timestamp, retained } = message
+
+			const deviceData = state.messages[deviceId] || {}
 
 			return Object.assign({}, state, {
-				messages: [...state.messages, { deviceId, topic, message }]
+				messages: Object.assign({}, state.messages, {
+					[deviceId]: Object.assign({}, deviceData, {
+						[topic]: Object.assign({}, deviceData[topic], {
+							[timestamp]: { value, timestamp, retained }
+						})
+					})
+				})
 			})
 		case actions.CONNECTION_LOST:
 		case actions.USER_LOGOUT:

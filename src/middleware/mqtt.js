@@ -12,16 +12,25 @@ const pahoMqttConnect = ({username, password}) => {
 
 		client.onMessageArrived = (message) => {
 			const topicData = message.destinationName.split('/')
+			
+			const { retained } = message
 			const deviceId = topicData[0]
 			const topic = topicData[1]
-
-			console.log(message.payloadString, message.retained, message.qos, message._getQos())
 			
-			config.topics.data[topic] && store.dispatch(actions.messageArrived({
-				deviceId,
-				topic,
-				message: JSON.parse(message.payloadString)
-			}))
+			try {
+				deviceId && config.topics.data[topic] &&
+				store.dispatch(actions.messageArrived({
+					deviceId,
+					topic,
+					message: {
+						...Object.assign({}, { timestamp: '0' }, JSON.parse(message.payloadString)),
+						retained
+					}
+				}))
+			} catch (e) {
+				console.error(e)
+			}
+			
 		}
 
 		client.onConnectionLost = () => store.dispatch(actions.connectionLost())

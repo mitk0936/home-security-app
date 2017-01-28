@@ -3,26 +3,26 @@ import { connect } from "react-redux"
 
 import { userLogout } from '../actions'
 
+import Device from '../components/Device/'
+
 export class DevicesList extends React.Component {
 		
-	logout () {
-
-	}
-
-	renderMessages () {
-		return this.props.messages.map(({ deviceId, topic, message }, index) => (
-			<li key={index}>
-				{`DeviceId: ${deviceId} Topic: ${topic} Message: ${JSON.stringify(message.value)}`}
-			</li>
-		))
-	}
+	logout () { }
 
 	render () {
+		const { messages } = this.props
+
 		return (
 			<div>
 				<a onClick={this.logout.bind(this)}>Logout</a>
 				<ul>
-					{ this.renderMessages() }
+					{
+						Object.keys(messages).map((deviceId) => (
+							<Device
+								deviceId={ deviceId }
+								messagesByTopics={ messages[deviceId] } />
+						))
+					}
 				</ul>
 			</div>
 		)
