@@ -20,7 +20,7 @@ const onRouteEnter = (path, replace) => {
 }
 
 const router = (
-	<Router history={history}>
+	<Router history={ history }>
 		<Route path={ config.paths.login } component={ App } >
 			<IndexRoute
 				component={ Login }

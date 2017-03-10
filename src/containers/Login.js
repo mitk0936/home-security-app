@@ -1,5 +1,4 @@
-import React from 'react';
-import Modal from '../components/common/Modal'
+import React from 'react'
 
 import { connect } from 'react-redux'
 import { connectMqtt } from '../actions'
@@ -16,9 +15,9 @@ class Login extends React.Component {
 		}
 	}
 
-	onInputChange (propName, e) {
+	onInputChange (propName, ev) {
 		this.setState({
-			[propName]: e.target.value
+			[propName]: ev.target.value
 		})
 	}
 
@@ -31,23 +30,15 @@ class Login extends React.Component {
 
 	render () {
 		return (
-			<Modal wrapperCssClass="login-modal-wrap">
-				<div className='login-form'>
-					<form type='POST' onSubmit={this.onSubmit.bind(this)} >
-						<div>
-							<label htmlFor='username'>username:</label>
-							<input type='text' id='username' name='username'
-								onChange={ this.onInputChange.bind(this, 'username') }/>
-						</div>
-						<div>
-							<label htmlFor='password'>password:</label>
-							<input type='password' id='password' name='password'
-								onChange={ this.onInputChange.bind(this, 'password') }/>
-						</div>
-						<input type='submit' value='login'/>
-					</form>
-				</div>
-			</Modal>
+			<div className='login-form'>
+				<form type='POST' onSubmit={ this.onSubmit.bind(this) } >
+					<input type='text' id='username' name='username' placeholder='Username'
+						onChange={ this.onInputChange.bind(this, 'username') }/>
+					<input type='password' id='password' name='password' placeholder='Password'
+						onChange={ this.onInputChange.bind(this, 'password') }/>
+					<input type='submit' value='login'/>
+				</form>
+			</div>
 		)
 	}
 }

@@ -23,14 +23,14 @@ const pahoMqttConnect = ({username, password}) => {
 					deviceId,
 					topic,
 					message: {
-						...Object.assign({}, { timestamp: '0' }, JSON.parse(message.payloadString)),
+						...{ timestamp: '0' },
+						...JSON.parse(message.payloadString),
 						retained
 					}
 				}))
 			} catch (e) {
 				console.error(e)
 			}
-			
 		}
 
 		client.onConnectionLost = () => store.dispatch(actions.connectionLost())
@@ -40,22 +40,15 @@ const pahoMqttConnect = ({username, password}) => {
 			userName: username,
 			password,
 			onSuccess: () => resolve({ client }),
-			onFailure: () => reject({error: 'login failed'})
-		});
+			onFailure: () => reject({ error: 'login failed' })
+		})
 	})
-}
-
-/*
-	Middleware watcher for the MQTT disconnect action
-*/
-export function* watchMqttDisconnect(action) {
-
 }
 
 /*
 	Middleware watcher for the MQTT connect action
 */
-export function* watchMqttConnect(action) {
+export function* watchMqttConnect () {
 	while (true) {
 		const action = yield take(actions.CONNECT_MQTT)
 
@@ -64,11 +57,11 @@ export function* watchMqttConnect(action) {
 			yield put(actions.userLogged({ username: action.username }))
 			yield put(actions.navigate(config.paths.devices))
 
-			// get existing devices, subscribe to all
 			client.subscribe('#')
 
-			// take adding new devices, subscribe to them
-			// take logout actions, disconnect client
+			yield take(actions.CONNECTION_LOST)
+			yield put(actions.navigate(config.paths.login))
+			
 		} catch (e) {
 			console.log(e)
 			alert('Unable to connect. Please, try again.')

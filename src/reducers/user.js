@@ -1,10 +1,23 @@
 import * as actions from '../actions'
+import config from '../config'
 
-export default function user (state = {
+const defaultDeviceState = {
+	[config.topics.data.connectivity]: false,
+	[config.topics.data.motion]: null,
+	[config.topics.data['temp-hum']]: {
+		temperature: 0,
+		humidity: 0
+	}
+}
+
+const defaultState = {
 	username: null,
 	logged: false,
-	messages: {}
-}, action) {
+	messages: {},
+	devicesState: {}
+}
+
+export default function user (state = defaultState, action) {
 	switch (action.type) {
 		case actions.USER_LOGGED:
 			return Object.assign({}, state, {
@@ -15,23 +28,32 @@ export default function user (state = {
 			const { deviceId, topic, message } = action
 			const { value, timestamp, retained } = message
 
-			const deviceData = state.messages[deviceId] || {}
+			const deviceData = state.devicesState[deviceId] || defaultDeviceState
+			const messagesByTopic = state.messages[deviceId] || {}
 
 			return Object.assign({}, state, {
+				devicesState: Object.assign({}, state.devicesState, {
+					[deviceId]: deviceData
+				}),
 				messages: Object.assign({}, state.messages, {
-					[deviceId]: Object.assign({}, deviceData, {
-						[topic]: Object.assign({}, deviceData[topic], {
+					[deviceId]: Object.assign({}, messagesByTopic, {
+						[topic]: Object.assign({}, messagesByTopic[topic], {
 							[timestamp]: { value, timestamp, retained }
 						})
 					})
 				})
 			})
+		case actions.SET_DEVICE_STATE:
+			return Object.assign({}, state, {
+				devicesState: Object.assign({}, state.devicesState, {
+					[action.deviceId]: Object.assign({}, state.devicesState[action.deviceId], {
+						[action.topic]: action.value
+					})
+				})
+			})
 		case actions.CONNECTION_LOST:
 		case actions.USER_LOGOUT:
-			return Object.assign({}, state, {
-				username: null,
-				logged: false
-			})
+			return defaultState
 	}
 
 	return state

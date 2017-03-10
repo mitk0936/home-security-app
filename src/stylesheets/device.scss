@@ -1,0 +1,24 @@
+.device-container {
+	margin: 10px;
+	background-color: #fff;
+	box-shadow: 2px 2px 3px #ccc;
+	padding: 10px;
+	display: flex;
+}
+
+.device-data-container {
+	flex-grow: 2;
+}
+
+.gauges-container {
+	width: 200px;
+	border-left: 1px solid #ccc;
+}
+
+.highcharts-credits {
+	display: none;
+}
+
+.device-name-label, .device-connectivity, .device-last-motion {
+	line-height: 15px;
+}

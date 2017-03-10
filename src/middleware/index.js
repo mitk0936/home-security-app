@@ -2,6 +2,8 @@ import { take, fork } from "redux-saga/effects"
 import { browserHistory } from 'react-router'
 
 import { watchMqttConnect } from "./mqtt"
+import { watchDevicesStatus } from './messages'
+
 import * as actions from '../actions'
 
 /*
@@ -16,6 +18,7 @@ const watchNavigate = function* () {
 
 export function* sagas() {
 	yield [
+		fork(watchDevicesStatus),
 		fork(watchMqttConnect),
 		fork(watchNavigate)
 	]

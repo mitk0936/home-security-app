@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 
-import '../../stylesheets/common/modal.scss'
+import '../stylesheets/common/modal.scss'
 
 class Modal extends Component {
 
@@ -25,7 +25,7 @@ class Modal extends Component {
 		this.modalTarget.id = this.componentId
 
 		document.body.appendChild(this.modalTarget)
-		document.body.className = (document.body.className + ' modal-open').trim()
+		document.body.className = `${document.body.className} modal-open`.trim()
 		document.body.style.top = `-${this.state.scrollYPostion}px`
 
 		this._render(this.props)

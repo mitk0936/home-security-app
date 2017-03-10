@@ -20,3 +20,8 @@ export const messageArrived = ({deviceId, topic, message}) => action(MESSAGE_ARR
 export const connectionLost = () => action(CONNECTION_LOST)
 export const userLogout = () => action(USER_LOGOUT)
 
+/* Messages middleware actions */
+export const SET_DEVICE_STATE = 'SET_DEVICE_STATE'
+
+export const setDeviceState = ({deviceId, topic, value}) => action(SET_DEVICE_STATE, {deviceId, topic, value})
+

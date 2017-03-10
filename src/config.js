@@ -11,7 +11,7 @@ const config = {
 		data: {
 			'connectivity': 'connectivity',
 			'motion': 'motion',
-			'temp-hum': 'temperature-hummidity'
+			'temp-hum': 'temp-hum'
 		}
 	}
 }
