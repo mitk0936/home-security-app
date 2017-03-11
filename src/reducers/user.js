@@ -7,7 +7,8 @@ const defaultDeviceState = {
 	[config.topics.data['temp-hum']]: {
 		temperature: 0,
 		humidity: 0
-	}
+	},
+	[config.topics.data.gas]: 0
 }
 
 const defaultState = {

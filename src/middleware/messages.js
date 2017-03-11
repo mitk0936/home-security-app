@@ -28,6 +28,9 @@ export function* watchDevicesStatus () {
 				}
 
 				break;
+			case config.topics.data['gas']:
+				yield put(actions.setDeviceState({ deviceId, topic, value: message.value }))
+				break;
 		}
 
 		/* 

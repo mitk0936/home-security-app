@@ -26,6 +26,7 @@ class Device extends React.Component {
 		
 		const isConnected = deviceState[config.topics.data.connectivity]
 		const lastDhtData = deviceState[config.topics.data['temp-hum']]
+		const lastGasData = deviceState[config.topics.data.gas]
 
 		const gaugeWidth = 200
 		const gaugeHeight = gaugeWidth * 0.7
@@ -57,20 +58,32 @@ class Device extends React.Component {
 						height={ gaugeHeight }
 						valueSize={ valueSize }
 						value={ lastDhtData.temperature } />
+
 					<Gauge id={`hum-${deviceId}`} title="Humidity" metric='%'
 						minValue={ 0 }
 						maxValue={ 100 }
 						width={ gaugeWidth }
 						height={ gaugeHeight }
 						valueSize={ valueSize }
-						value={ lastDhtData.humidity } />
-					<Gauge id={`hum-2-${deviceId}`} title="Humidity" metric='%'
+						value={ lastDhtData.humidity }
+						stops={[
+							[0.1, '#DF5353'], // red
+							[0.2, '#DDDF0D'], // yellow
+							[0.9, '#3399FF'] // blue
+						]} />
+
+					<Gauge id={`gas-${deviceId}`} title="Smoke concentration" metric='%'
 						minValue={ 0 }
 						maxValue={ 100 }
 						width={ gaugeWidth }
 						height={ gaugeHeight }
 						valueSize={ valueSize }
-						value={ lastDhtData.humidity } />
+						value={ lastGasData }
+						stops= {[
+							[0.1, '#DDD'],
+							[0.6, '#777'],
+							[0.9, '#000'],
+						]} />
 				</div>
 			</li>
 		)

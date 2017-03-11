@@ -11,7 +11,8 @@ const config = {
 		data: {
 			'connectivity': 'connectivity',
 			'motion': 'motion',
-			'temp-hum': 'temp-hum'
+			'temp-hum': 'temp-hum',
+			'gas': 'gas'
 		}
 	}
 }
