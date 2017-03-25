@@ -1,9 +1,11 @@
 import { take, call, put } from 'redux-saga/effects'
-import PahoMQTT from 'paho.mqtt.js'
+import { takeLatest } from 'redux-saga'
 import { store } from '../store'
 import * as actions from '../actions'
 import { user } from '../selectors'
 import config from '../config'
+
+import { pahoMqttConnect } from '../services/mqttConnect'
 
 const onMessageArrived = (message) => {
 	const topicData = message.destinationName.split('/')
@@ -28,46 +30,45 @@ const onMessageArrived = (message) => {
 	}
 }
 
-const pahoMqttConnect = ({username, password}, onMessageArrived) => {
-	return new Promise ((resolve, reject) => {
-		const { host, port } = config.mqtt
-		const client = new PahoMQTT.Client(host, port, '_234112123123')
+const onConnectionLost = () => store.dispatch(actions.connectionLost())
 
-		client.onMessageArrived = onMessageArrived
-
-		client.onConnectionLost = () => store.dispatch(actions.connectionLost())
-
-		client.connect({
-			useSSL: true,
-			userName: username,
-			password,
-			onSuccess: () => resolve({ client }),
-			onFailure: () => reject({ error: 'login failed' })
-		})
-	})
-}
 
 /*
 	Middleware watcher for the MQTT connect action
 */
 export function* watchMqttConnect () {
-	while (true) {
-		const action = yield take(actions.CONNECT_MQTT)
+	let reconnectsLeft = config.mqtt.allowedReconnects
 
-		try {
-			const { client } = yield call(pahoMqttConnect, action, onMessageArrived)
-			yield put(actions.userLogged({ username: action.username }))
-			yield put(actions.navigate(config.paths.devices))
-
-			client.subscribe('#')
-
-			yield take(actions.CONNECTION_LOST)
-			yield put(actions.navigate(config.paths.login))
+	yield takeLatest(actions.CONNECT_MQTT, function* ({ username, password }) {
+		if (reconnectsLeft > 0) {
 			
-		} catch (e) {
-			console.log(e)
-			alert('Unable to connect. Please, try again.')
-			// TODO: handle unable to connect
+			try {				
+				const { client } = yield call(pahoMqttConnect, { username, password }, onMessageArrived, onConnectionLost)
+				
+				yield put(actions.userLogged({ username }))
+				yield put(actions.navigate(config.paths.devices))
+
+				client.subscribe('#')
+
+				reconnectsLeft = config.mqtt.allowedReconnects
+
+				yield take(actions.CONNECTION_LOST)
+				yield put(actions.connectMqtt({ username, password }))
+			} catch (e) {
+				alert('Unable to connect. Please, try again.')
+				
+				reconnectsLeft--
+				
+				yield put(actions.connectMqtt({ username, password }))
+			}
+
+		} else {
+			alert('3 reconnects failed, please login again')
+			
+			reconnectsLeft = config.mqtt.allowedReconnects
+
+			yield(put(actions.userLogout()))
+			yield put(actions.navigate(config.paths.login))
 		}
-	}
+	})
 }

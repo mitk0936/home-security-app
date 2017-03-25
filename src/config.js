@@ -1,7 +1,8 @@
 const config = {
 	mqtt: {
 		host: 'm21.cloudmqtt.com',
-		port: 30247
+		port: 30247,
+		allowedReconnects: 3
 	},
 	paths: {
 		login: '/',

@@ -1,8 +1,6 @@
 import React from 'react'
 import HighStock from 'highstock-release'
 
-import '../../stylesheets/timeline.scss'
-
 
 class Timeline extends React.Component {
 	constructor(props) {
