@@ -68,9 +68,7 @@ class Gauge extends React.Component {
 		this.chart = {}
 	}
 
-	shouldComponentUpdate () {
-		return false
-	}
+	componentWillMount () { }
 
 	componentWillReceiveProps (nextProps) {
 		if (nextProps.value !== this.props.value) {
@@ -79,7 +77,9 @@ class Gauge extends React.Component {
 		}
 	}
 
-	componentWillMount () { }
+	shouldComponentUpdate () {
+		return false
+	}
 
 	render () {
 		const style = {

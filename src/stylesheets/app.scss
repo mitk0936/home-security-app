@@ -4,15 +4,9 @@
 	font-family: Arial, sans-serif !important;
 }
 
-.clearfix {
-	content: "";
-	display: table;
-	clear: both;
-}
-
 body {
 	position: relative;
 	background-color: #ddd;
+	margin: 0 20px;
+	overflow-y: scroll;
 }
-
-.app-container { }

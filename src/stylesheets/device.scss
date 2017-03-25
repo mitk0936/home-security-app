@@ -1,13 +1,20 @@
 .device-container {
-	margin: 10px;
 	background-color: #fff;
 	box-shadow: 2px 2px 3px #ccc;
-	padding: 10px;
-	display: flex;
+	width: 100%;
+	margin: 20px 0;
+    overflow: hidden;
 }
+
+.device-graphics-container {
+	display: flex;
+	box-sizing: border-box;
+}
+
 
 .device-data-container {
 	flex-grow: 2;
+	box-sizing: border-box;
 }
 
 .gauges-container {
@@ -21,4 +28,14 @@
 
 .device-name-label, .device-connectivity, .device-last-motion {
 	line-height: 15px;
+	padding-left: 10px;
+	padding-top: 10px;
+}
+
+.gauge {
+	border-bottom: 1px solid #ccc;
+	
+	&:last-child {
+		border: 0
+	}
 }

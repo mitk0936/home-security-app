@@ -5,33 +5,35 @@ import * as actions from '../actions'
 import { user } from '../selectors'
 import config from '../config'
 
-const pahoMqttConnect = ({username, password}) => {
+const onMessageArrived = (message) => {
+	const topicData = message.destinationName.split('/')
+			
+	const { retained } = message
+	const deviceId = topicData[0]
+	const topic = topicData[1]
+	
+	try {
+		deviceId && config.topics.data[topic] &&
+		store.dispatch(actions.messageArrived({
+			deviceId,
+			topic,
+			message: {
+				...{ timestamp: '0' },
+				...JSON.parse(message.payloadString),
+				retained
+			}
+		}))
+	} catch (e) {
+		console.error(e)
+	}
+}
+
+const pahoMqttConnect = ({username, password}, onMessageArrived) => {
 	return new Promise ((resolve, reject) => {
 		const { host, port } = config.mqtt
 		const client = new PahoMQTT.Client(host, port, '_234112123123')
 
-		client.onMessageArrived = (message) => {
-			const topicData = message.destinationName.split('/')
-			
-			const { retained } = message
-			const deviceId = topicData[0]
-			const topic = topicData[1]
-			
-			try {
-				deviceId && config.topics.data[topic] &&
-				store.dispatch(actions.messageArrived({
-					deviceId,
-					topic,
-					message: {
-						...{ timestamp: '0' },
-						...JSON.parse(message.payloadString),
-						retained
-					}
-				}))
-			} catch (e) {
-				console.error(e)
-			}
-		}
+		client.onMessageArrived = onMessageArrived
 
 		client.onConnectionLost = () => store.dispatch(actions.connectionLost())
 
@@ -53,7 +55,7 @@ export function* watchMqttConnect () {
 		const action = yield take(actions.CONNECT_MQTT)
 
 		try {
-			const { client } = yield call(pahoMqttConnect, action)
+			const { client } = yield call(pahoMqttConnect, action, onMessageArrived)
 			yield put(actions.userLogged({ username: action.username }))
 			yield put(actions.navigate(config.paths.devices))
 
