@@ -1,11 +1,10 @@
 import React from 'react'
 import Gauge from '../charts/Gauge'
 import Timeline from '../charts/Timeline'
-
+import { UTCToLocalTime } from '../../utils/time'
 import config from '../../config'
 
 import '../../stylesheets/device.scss'
-
 class Device extends React.Component {
 	constructor (props) {
 		super(props)
@@ -22,6 +21,46 @@ class Device extends React.Component {
 		)
 	}
 
+	getCurrentDate (timestamp) {
+		var d = new Date(0)
+		d.setUTCSeconds(timestamp)
+		return UTCToLocalTime(d).getTime()
+	}
+
+	generateConnectivitySeriesFlags () {
+		const connectionFlagsData = []
+
+		const connectionMessages = this.props.messagesByTopics[config.topics.data.connectivity]
+
+		connectionMessages && Object.keys(connectionMessages).map((timestamp) => {
+			if (connectionMessages[timestamp].value) {
+				connectionFlagsData.push({
+					x: this.getCurrentDate(timestamp),
+					title: 'Online'
+				})
+			}
+		})
+
+		return connectionFlagsData
+	}
+
+	generateMotionSeriesFlags () {
+		const motionFlagsData = []
+
+		const motionMessages = this.props.messagesByTopics[config.topics.data.motion]
+
+		motionMessages && Object.keys(motionMessages).map((timestamp) => {
+			if (motionMessages[timestamp].value == 1) {
+				motionFlagsData.push({
+					x: this.getCurrentDate(timestamp),
+					title: 'Motion'
+				})
+			}
+		})
+
+		return motionFlagsData
+	}
+
 	generateTempHumSeriesData () {
 		const 	tempSeriesData = [],
 				humiditySeriesData = []
@@ -30,8 +69,8 @@ class Device extends React.Component {
 
 		tempHumMessages && Object.keys(tempHumMessages).map((timestamp) => {
 			if (tempHumMessages[timestamp].value) {
-				tempSeriesData.push([timestamp * 1000, tempHumMessages[timestamp].value.temperature ])
-				humiditySeriesData.push([timestamp * 1000, tempHumMessages[timestamp].value.humidity ])
+				tempSeriesData.push([this.getCurrentDate(timestamp), tempHumMessages[timestamp].value.temperature ])
+				humiditySeriesData.push([this.getCurrentDate(timestamp), tempHumMessages[timestamp].value.humidity ])
 			}
 		})
 
@@ -40,14 +79,22 @@ class Device extends React.Component {
 
 	generateGasSeriesData () {
 		const gasSeriesData = []
+		const gasFlagsData = []
 
 		const gasMessages = this.props.messagesByTopics[config.topics.data.gas]
 
 		gasMessages && Object.keys(gasMessages).map((timestamp) => {
-			gasSeriesData.push([timestamp * 1000, gasMessages[timestamp].value ])
+			(gasMessages[timestamp].value > 40) && gasFlagsData.push({
+				x: this.getCurrentDate(timestamp),
+				y: gasMessages[timestamp].value,
+				id: timestamp,
+				title: 'Smoke'
+			})
+
+			gasSeriesData.push([this.getCurrentDate(timestamp), gasMessages[timestamp].value ])
 		})
 
-		return gasSeriesData
+		return { gasSeriesData, gasFlagsData }
 	}
 
 	render () {
@@ -57,12 +104,10 @@ class Device extends React.Component {
 		const lastDhtData = deviceState[config.topics.data['temp-hum']]
 		const lastGasData = deviceState[config.topics.data.gas]
 
-		const gaugeWidth = 200
-		const gaugeHeight = gaugeWidth * 0.7
-		const valueSize = gaugeWidth / 15
-
 		const { tempSeriesData, humiditySeriesData } = this.generateTempHumSeriesData()
-		const gasSeriesData = this.generateGasSeriesData()
+		const { gasSeriesData, gasFlagsData } = this.generateGasSeriesData()
+		const motionFlagsData = this.generateMotionSeriesFlags()
+		const connectionFlagsData = this.generateConnectivitySeriesFlags()
 
 		return (
 			<li className='device-container'>
@@ -85,44 +130,18 @@ class Device extends React.Component {
 						<Timeline
 							id={`test-timeline-${deviceId}`}
 							title='Timeline data from sensors'
-							seriesData={
-								[humiditySeriesData, gasSeriesData, tempSeriesData]
-							} />
+							seriesData={ [humiditySeriesData, gasSeriesData, tempSeriesData, gasFlagsData, motionFlagsData, connectionFlagsData] } />
 					</div>
 					<div className='gauges-container'>
-						<Gauge id={`${deviceId}`} title="Temp" metric='&deg;C'
-							minValue={ 0 }
-							maxValue={ 100 }
-							width={ gaugeWidth }
-							height={ gaugeHeight }
-							valueSize={ valueSize }
-							value={ lastDhtData.temperature } />
-
-						<Gauge id={`hum-${deviceId}`} title="Humidity" metric='%'
-							minValue={ 0 }
-							maxValue={ 100 }
-							width={ gaugeWidth }
-							height={ gaugeHeight }
-							valueSize={ valueSize }
-							value={ lastDhtData.humidity }
-							stops={[
-								[0.1, '#DF5353'], // red
-								[0.2, '#DDDF0D'], // yellow
-								[0.9, '#3399FF'] // blue
-							]} />
-
 						<Gauge id={`gas-${deviceId}`} title="Smoke concentration" metric='%'
-							minValue={ 0 }
-							maxValue={ 100 }
-							width={ gaugeWidth }
-							height={ gaugeHeight }
-							valueSize={ valueSize }
-							value={ lastGasData }
-							stops= {[
-								[0.1, '#DDD'],
-								[0.6, '#777'],
-								[0.9, '#000'],
-							]} />
+							color='#777'
+							value={ lastGasData } />
+						<Gauge id={`${deviceId}`} title="Temperature" metric='&deg;C'
+							color='#FF9933'
+							value={ lastDhtData.temperature } />
+						<Gauge id={`hum-${deviceId}`} title="Humidity" metric='%'
+							color='#99CCFF'
+							value={ lastDhtData.humidity } />
 					</div>
 				</div>
 			</li>

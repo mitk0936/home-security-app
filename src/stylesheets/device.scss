@@ -1,9 +1,14 @@
 .device-container {
 	background-color: #fff;
 	box-shadow: 2px 2px 3px #ccc;
+	-webkit-box-shadow: 2px 2px 3px #ccc;
 	width: 100%;
 	margin: 20px 0;
     overflow: hidden;
+}
+
+.timeline {
+	height: 380px;
 }
 
 .device-graphics-container {
@@ -18,8 +23,11 @@
 }
 
 .gauges-container {
-	width: 200px;
+	width: 180px;
 	border-left: 1px solid #ccc;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
 .highcharts-credits {
@@ -30,6 +38,10 @@
 	line-height: 15px;
 	padding-left: 10px;
 	padding-top: 10px;
+}
+
+.highcharts-legend-item {
+	margin: 5px 0;
 }
 
 .gauge {

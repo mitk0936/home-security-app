@@ -11,12 +11,20 @@ class Gauge extends React.Component {
 	constructor (props) {
 		super(props)
 
+		const gaugeWidth = 180
+
+		this.state = {
+			gaugeWidth,
+			gaugeHeight: gaugeWidth * 0.7,
+			valueSize: gaugeWidth / 15
+		}
+
 		this.gaugeOptions = {
 			chart: { type: 'solidgauge', backgroundColor: '#fff'},
 			title: {
 				text: props.title,
 				margin: 0,
-				style: { "color": "#333333", "fontSize": "14px" }
+				style: { "color": "#333333", "fontSize": "12px" }
 			},
 			pane: {
 				center: ['50%', '85%'],
@@ -32,9 +40,9 @@ class Gauge extends React.Component {
 			},
 			tooltip: { enabled: false },
 			yAxis: {
-				min: props.minValue,
-				max: props.maxValue,
-				stops: props.stops,
+				stops: [[0.1, props.color]],
+				min: 0,
+				max: 100,
 				lineWidth: 0.5,
 				minorTickInterval: 2,
 				tickAmount: 1,
@@ -53,11 +61,11 @@ class Gauge extends React.Component {
 			series: [
 				{
 					name: props.id,
-					data: [props.minValue],
+					data: [0],
 					dataLabels: {
 						format: [
 							'<div style="text-align:center">',
-							`	<span style="font-size: ${props.valueSize}px; color: #000">{y} ${props.metric}</span><br/>`,
+							`	<span style="font-size: ${this.state.valueSize}px; color: #000">{y} ${props.metric}</span><br/>`,
 						  	'</div>'
 						].join('')
 					}
@@ -68,8 +76,6 @@ class Gauge extends React.Component {
 		this.chart = {}
 	}
 
-	componentWillMount () { }
-
 	componentWillReceiveProps (nextProps) {
 		if (nextProps.value !== this.props.value) {
 			const point = this.chart.series[0].points[0]
@@ -78,13 +84,13 @@ class Gauge extends React.Component {
 	}
 
 	shouldComponentUpdate () {
-		return false
+		return true
 	}
 
 	render () {
 		const style = {
-			width: `${this.props.width}px`,
-			height: `${this.props.height}px`
+			width: `${this.state.gaugeWidth}px`,
+			height: `${this.state.gaugeHeight}px`
 		}
 
 		return (
@@ -104,21 +110,8 @@ class Gauge extends React.Component {
 Gauge.propTypes = {
 	id: React.PropTypes.string.isRequired,
 	title: React.PropTypes.string.isRequired,
-	stops: React.PropTypes.array,
-	width: React.PropTypes.number.isRequired,
-	height: React.PropTypes.number.isRequired,
-	valueSize: React.PropTypes.number.isRequired,
-	minValue: React.PropTypes.number.isRequired,
-	maxValue: React.PropTypes.number.isRequired,
-	metric: React.PropTypes.string.isRequired
-}
-
-Gauge.defaultProps = {
-	stops: [
-		[0.1, '#3399FF'], // blue
-		[0.2, '#DDDF0D'], // yellow
-		[0.9, '#DF5353'] // red
-	]
+	metric: React.PropTypes.string.isRequired,
+	color: React.PropTypes.string
 }
 
 export default Gauge

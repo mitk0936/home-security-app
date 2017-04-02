@@ -14,7 +14,7 @@ export const MESSAGE_ARRIVED = 'MESSAGE_ARRIVED'
 export const CONNECTION_LOST = 'CONNECTION_LOST'
 export const USER_LOGOUT = 'USER_LOGOUT'
 
-export const connectMqtt = ({username, password}) => action(CONNECT_MQTT, {username, password})
+export const connectMqtt = ({username, password, reconnect}) => action(CONNECT_MQTT, {username, password, reconnect: Boolean(reconnect)})
 export const userLogged = ({username}) => action(USER_LOGGED, {username})
 export const messageArrived = ({deviceId, topic, message}) => action(MESSAGE_ARRIVED, { deviceId, topic, message })
 export const connectionLost = () => action(CONNECTION_LOST)

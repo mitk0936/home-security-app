@@ -7,7 +7,7 @@ import config from './config'
 
 import App from './containers/App'
 import Login from './containers/Login'
-import DevicesList from './containers/DevicesList'
+import MainScreen from './containers/MainScreen'
 
 const onRouteEnter = (path, replace) => {
 	const userLogged = store.getState().user.logged
@@ -27,7 +27,7 @@ const router = (
 				onEnter={ onRouteEnter } />
 			<Route
 				path={ config.paths.devices }
-				component={ DevicesList }
+				component={ MainScreen }
 				onEnter={ onRouteEnter } />
 			<Route
 				path='*'

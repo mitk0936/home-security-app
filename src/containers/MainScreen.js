@@ -3,13 +3,11 @@ import React from "react"
 import { connect } from "react-redux"
 import moment from 'moment'
 
-import { userLogout } from '../actions'
-
+import AppHeader from '../components/AppHeader'
 import Device from '../components/Device/'
-
 import config from '../config'
 
-export class DevicesList extends React.Component {
+export class MainScreen extends React.Component {
 	constructor (props) {
 		super(props)
 
@@ -54,15 +52,23 @@ export class DevicesList extends React.Component {
 		Object.keys(this.deviceReferences).map(this.updateReferenceByDeviceId)
 	}
 
+	renderReconnectingOverlay () {
+		return (
+			<div className='reconnecting-overlay'>
+				<p>
+					Reconnecting...
+				</p>
+			</div>
+		)
+	}
+
 	render () {
-		const { messages, devicesState } = this.props
+		const { messages, devicesState, reconnecting } = this.props
 
 		return (
-			<div>
-				<a onClick={ this.logout }>
-					Logout
-				</a>
-				<h1>Your devices</h1>
+			<section>
+				<AppHeader />
+				
 				<ul className='devices-list'>
 					{
 						Object.keys(messages).map((deviceId) => (
@@ -75,7 +81,9 @@ export class DevicesList extends React.Component {
 						))
 					}
 				</ul>
-			</div>
+
+				{ reconnecting ? this.renderReconnectingOverlay() : null }
+			</section>
 		)
 	}
 
@@ -83,12 +91,10 @@ export class DevicesList extends React.Component {
 		this.deviceReferences = {}
 	}
 
-	logout () { }
-
-	
+	logout () { }	
 }
 
-DevicesList.propTypes = {
+MainScreen.propTypes = {
 	devicesState: React.PropTypes.object.isRequired,
 	messages: React.PropTypes.object.isRequired
 }
@@ -96,10 +102,9 @@ DevicesList.propTypes = {
 function mapStateToProps (state, ownProps) {
 	return {
 		devicesState: state.user.devicesState,
-		messages: state.user.messages
+		messages: state.user.messages,
+		reconnecting: state.user.reconnecting
 	}
 }
 
-export default connect(mapStateToProps, {
-	userLogout
-})(DevicesList);
+export default connect(mapStateToProps, {})(MainScreen);

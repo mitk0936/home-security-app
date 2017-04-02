@@ -16,6 +16,15 @@ class Timeline extends React.Component {
 				zoomType: 'x',
 				panning: true
 			},
+			legend: {
+				margin: 15,
+				itemMarginTop: 5,
+				itemMarginBottom: 5,
+				padding: 0,
+				navigation: {
+					enabled: false
+				}
+			},
 			rangeSelector: {
 				enabled: false,
 				inputEnabled: false
@@ -28,8 +37,9 @@ class Timeline extends React.Component {
 				text: props.title
 			},
 			tooltip: {
+				followTouchMove: false,
 				style: {
-					width: '200px'
+					width: '100px'
 				}
 			},
 			yAxis: [
@@ -61,15 +71,11 @@ class Timeline extends React.Component {
 				series: {
 					marker: {
 						symbol: 'circle',
-						radius: 2
+						radius: 5,
+						lineColor: "#eee",
+						lineWidth: 2
 					},
 					fillOpacity: 0.5
-				},
-				flags: {
-					tooltip: {
-						enabled: false,
-						xDateFormat: '%B %e, %Y'
-					}
 				}
 			},
 			series: [
@@ -78,6 +84,7 @@ class Timeline extends React.Component {
 					id: 'humidity',
 					name: 'Measured humidity',
 					data: [],
+					color: '#99CCFF',
 					tooltip: {
 						xDateFormat: '%Y, %d %B %H:%M',
 						valueSuffix: ' %'
@@ -92,6 +99,9 @@ class Timeline extends React.Component {
 						valueSuffix: ' %'
 					},
 					data: [],
+					color: '#333',
+					lineColor: "#ccc",
+					lineWidth: 3
 				},
 				{
 					type: 'spline',
@@ -99,12 +109,34 @@ class Timeline extends React.Component {
 					name: 'Measured temperature',
 					dashStyle: 'line',
 					data: [],
-					color: '#ff0000',
+					color: '#FF9933',
 					tooltip: {
 						xDateFormat: '%Y, %d %B %H:%M',
-						valueSuffix: 'Celsius',
+						valueSuffix: ' Celsius',
 						useHTML: true
 					}
+				},
+				{
+					type: 'flags',
+					id: 'gas-flags',
+					linkedTo: 'gas',
+					name: 'Smoke detected',
+					data: [],
+					color: '#777',
+				},
+				{
+					type: 'flags',
+					id: 'motion-flags',
+					name: 'Motion detected',
+					data: [],
+					color: '#ff0000',
+				},
+				{
+					type: 'flags',
+					id: 'connection-flags',
+					name: 'Connectivity changes',
+					data: [],
+					color: '#3399FF',
 				}
 			]
 		}
@@ -113,7 +145,8 @@ class Timeline extends React.Component {
 	componentWillReceiveProps (nextProps) {
 		let shouldRedraw = false
 
-		for (var i = 0; i < nextProps.seriesData.length; i++) {
+		/* Check for changes in series data */
+		for (let i = 0; i < nextProps.seriesData.length; i++) {
 			if (JSON.stringify(nextProps.seriesData[i]) !== JSON.stringify(this.props.seriesData[i])) {
 				this.chart.series[i].setData(nextProps.seriesData[i])
 				shouldRedraw = true

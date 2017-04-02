@@ -1,5 +1,5 @@
 import { take, call, put } from 'redux-saga/effects'
-import { takeLatest } from 'redux-saga'
+import { takeLatest, delay } from 'redux-saga'
 import { store } from '../store'
 import * as actions from '../actions'
 import { user } from '../selectors'
@@ -39,9 +39,11 @@ const onConnectionLost = () => store.dispatch(actions.connectionLost())
 export function* watchMqttConnect () {
 	let reconnectsLeft = config.mqtt.allowedReconnects
 
-	yield takeLatest(actions.CONNECT_MQTT, function* ({ username, password }) {
-		if (reconnectsLeft > 0) {
-			
+	yield takeLatest(actions.CONNECT_MQTT, function* ({ username, password, reconnect }) {
+
+		const allowedToReconnect = (reconnect && reconnectsLeft > 0)
+
+		if (!reconnect || allowedToReconnect) {
 			try {				
 				const { client } = yield call(pahoMqttConnect, { username, password }, onMessageArrived, onConnectionLost)
 				
@@ -53,22 +55,28 @@ export function* watchMqttConnect () {
 				reconnectsLeft = config.mqtt.allowedReconnects
 
 				yield take(actions.CONNECTION_LOST)
-				yield put(actions.connectMqtt({ username, password }))
+				yield put(actions.connectMqtt({ username, password, reconnect: true }))
 			} catch (e) {
-				alert('Unable to connect. Please, try again.')
-				
+
+				if (!reconnect) {
+					alert('Unable to login. Please, try again.')
+					return
+				}
+
+				yield call(delay, 2000)
 				reconnectsLeft--
-				
-				yield put(actions.connectMqtt({ username, password }))
+				yield put(actions.connectMqtt({ username, password, reconnect: true }))
 			}
 
-		} else {
-			alert('3 reconnects failed, please login again')
-			
-			reconnectsLeft = config.mqtt.allowedReconnects
-
-			yield(put(actions.userLogout()))
-			yield put(actions.navigate(config.paths.login))
+			return
 		}
+
+
+		alert('Ooops. Looks like you lost network connectivity.')
+			
+		reconnectsLeft = config.mqtt.allowedReconnects
+
+		yield(put(actions.userLogout()))
+		yield put(actions.navigate(config.paths.login))
 	})
 }

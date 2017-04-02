@@ -1,0 +1,33 @@
+.app-header {
+	background-color: #8C685A;
+	color: #FAFAFA;
+	display: flex;
+	align-items: center;
+	border-bottom: 5px solid #715247;
+
+	& > * {
+		border-left: 1px solid #715247;
+		height: 50px;
+		line-height: 50px;
+		padding: 0 20px;
+
+		&:first-child {
+			border-left: 0;
+		}
+	}
+}
+
+.logout-link {
+	width: 50px;
+	cursor: pointer;
+
+	&:active {
+		background-color: #715247;
+	}
+}
+
+.header-title {
+	flex-grow: 2;
+	font-weight: normal;
+}
+

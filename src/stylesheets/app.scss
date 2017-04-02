@@ -1,12 +1,32 @@
 @import 'reset';
 
 * {
-	font-family: Arial, sans-serif !important;
+	font-family: Tahoma, Arial, sans-serif !important;
 }
 
 body {
 	position: relative;
 	background-color: #ddd;
-	margin: 0 20px;
 	overflow-y: scroll;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+}
+
+.devices-list {
+	margin: 0 20px;
+}
+
+.reconnecting-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	justify-content: center;
+    align-items: center;
+    z-index: 99;
+    background-color: #fff;
+    opacity: 0.9;
 }
