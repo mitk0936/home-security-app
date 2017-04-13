@@ -13,8 +13,8 @@ module.exports = {
 		__dirname + '/' + app_root + '/index.js',
 	],
 	output: {
-		path: __dirname + dist + '/js',
-		publicPath: 'js/',
+		path: __dirname + dist,
+		publicPath: '',
 		filename: 'bundle.js',
 	},
 	devtool: false,
@@ -32,7 +32,11 @@ module.exports = {
 			{
 				test: /\.css$/,
 				loaders: ['style', 'css'],
-			}
+			},
+			{
+				test: /\.(eot|svg|ttf|otf|woff|woff2)$/,
+				loader: 'file-loader?name=./fonts/[name].[ext]'
+			},
 		],
 	},
 	devServer: {

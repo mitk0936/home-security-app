@@ -15,6 +15,13 @@ const config = {
 			'temp-hum': 'temp-hum',
 			'gas': 'gas'
 		}
+	},
+	colors: {
+		temperature: '#d35400',
+		humidity: '#3498db',
+		gas: '#7f8c8d',
+		motion: '#c0392b',
+		connectivity: '#34495e'
 	}
 }
 

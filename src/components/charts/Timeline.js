@@ -1,5 +1,6 @@
 import React from 'react'
 import HighStock from 'highstock-release'
+import config from '../../config'
 
 
 class Timeline extends React.Component {
@@ -10,9 +11,6 @@ class Timeline extends React.Component {
 			spacing: [0, 0, 0, 0],
 			chart: {
 				renderTo: `timeline-${props.id}`,
-				events: {
-					load: function () { }
-				},
 				zoomType: 'x',
 				panning: true
 			},
@@ -21,9 +19,7 @@ class Timeline extends React.Component {
 				itemMarginTop: 5,
 				itemMarginBottom: 5,
 				padding: 0,
-				navigation: {
-					enabled: false
-				}
+				navigation: { enabled: false }
 			},
 			rangeSelector: {
 				enabled: false,
@@ -33,112 +29,90 @@ class Timeline extends React.Component {
 				type: 'datetime',
 				minTickInterval: 1000
 			},
-			title: {
-				text: props.title
-			},
+			title: { text: '' },
 			tooltip: {
 				followTouchMove: false,
-				style: {
-					width: '100px'
-				}
+				crosshairs: true,
+				shadow: false,
+				style: { width: '100px' }
 			},
-			yAxis: [
-				{
-					max: 100,
-					title: {
-						text: 'Temperature (Celsius)'
-					},
-					opposite: true,
-					gridLineWidth: 1
+			yAxis: [{
+				max: 100,
+				title: {
+					text: 'Sensors Data',
+					style: { fontSize: 14, color: config.colors.gas, fontWeight: 'bold' }
 				},
-				{
-					max: 100,
-					title: {
-						text: 'Humidity %'
-					},
-					opposite: true,
-					gridLineWidth: 1
-				},
-				{
-					max: 100,
-					title: {
-						text: 'Smoke concentration %'
-					},
-					gridLineColor: 'rgba(0, 0, 0, 0.07)'
-				}
-			],
+				opposite: true,
+				gridLineWidth: 1
+			}],
 			plotOptions: {
 				series: {
 					marker: {
 						symbol: 'circle',
-						radius: 5,
+						radius: 4,
 						lineColor: "#eee",
-						lineWidth: 2
+						lineWidth: 1
 					},
 					fillOpacity: 0.5
 				}
 			},
-			series: [
-				{
-					type: 'spline',
-					id: 'humidity',
-					name: 'Measured humidity',
-					data: [],
-					color: '#99CCFF',
-					tooltip: {
-						xDateFormat: '%Y, %d %B %H:%M',
-						valueSuffix: ' %'
-					}
-				},
-				{
-					type: 'spline',
-					id: 'gas',
-					name: 'Measured smoke concentration',
-					tooltip: {
-						xDateFormat: '%Y, %d %B %H:%M',
-						valueSuffix: ' %'
-					},
-					data: [],
-					color: '#333',
-					lineColor: "#ccc",
-					lineWidth: 3
-				},
-				{
-					type: 'spline',
-					id: 'temperature',
-					name: 'Measured temperature',
-					dashStyle: 'line',
-					data: [],
-					color: '#FF9933',
-					tooltip: {
-						xDateFormat: '%Y, %d %B %H:%M',
-						valueSuffix: ' Celsius',
-						useHTML: true
-					}
-				},
-				{
-					type: 'flags',
-					id: 'gas-flags',
-					linkedTo: 'gas',
-					name: 'Smoke detected',
-					data: [],
-					color: '#777',
-				},
-				{
-					type: 'flags',
-					id: 'motion-flags',
-					name: 'Motion detected',
-					data: [],
-					color: '#ff0000',
-				},
-				{
-					type: 'flags',
-					id: 'connection-flags',
-					name: 'Connectivity changes',
-					data: [],
-					color: '#3399FF',
+			series: [{
+				type: 'spline',
+				id: 'humidity',
+				name: 'Measured humidity',
+				data: [],
+				color: config.colors.humidity,
+				tooltip: {
+					xDateFormat: '%Y, %d %B %H:%M',
+					valueSuffix: ' %'
 				}
-			]
+			}, {
+				type: 'spline',
+				id: 'gas',
+				name: 'Measured smoke concentration',
+				tooltip: {
+					xDateFormat: '%Y, %d %B %H:%M',
+					valueSuffix: ' %'
+				},
+				data: [],
+				color: config.colors.gas
+			}, {
+				type: 'spline',
+				id: 'temperature',
+				name: 'Measured temperature',
+				dashStyle: 'line',
+				data: [],
+				color: config.colors.temperature,
+				tooltip: {
+					xDateFormat: '%Y, %d %B %H:%M',
+					valueSuffix: ' Celsius',
+					useHTML: true
+				}
+			}, {
+				type: 'flags',
+				id: 'gas-flags',
+				linkedTo: 'gas',
+				name: 'Smoke detected',
+				data: [],
+				color: '#777',
+				y: -20,
+				x: -20,
+				shape: 'squarepin'
+			}, {
+				type: 'flags',
+				id: 'motion-flags',
+				name: 'Motion detected',
+				data: [],
+				color: config.colors.motion,
+				shape: 'squarepin'
+			}, {
+				type: 'flags',
+				id: 'connection-flags',
+				name: 'Connectivity changes',
+				data: [],
+				color: config.colors.connectivity,
+				shape: 'squarepin'
+			}]
 		}
 	}
 
@@ -177,7 +151,6 @@ class Timeline extends React.Component {
 
 Timeline.propTypes = {
 	id: React.PropTypes.string.isRequired,
-	title: React.PropTypes.string.isRequired,
 	seriesData: React.PropTypes.array.isRequired
 }
 

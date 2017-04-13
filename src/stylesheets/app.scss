@@ -1,20 +1,25 @@
 @import 'reset';
 
+@font-face {
+	font-family: QuickSand;
+	src: url("../fonts/Quicksand-Regular.otf") format("opentype");
+}
+
 * {
-	font-family: Tahoma, Arial, sans-serif !important;
+	font-family: QuickSand, Tahoma, Arial, sans-serif !important;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	-webkit-tap-highlight-color: transparent;
+	-webkit-user-select: none;
 }
 
 body {
 	position: relative;
 	background-color: #ddd;
 	overflow-y: scroll;
-	-moz-user-select: none;
-	-khtml-user-select: none;
-	-webkit-user-select: none;
 }
 
 .devices-list {
-	margin: 0 20px;
+	margin: 0 8px;
 }
 
 .reconnecting-overlay {
@@ -25,8 +30,8 @@ body {
 	bottom: 0;
 	display: flex;
 	justify-content: center;
-    align-items: center;
-    z-index: 99;
-    background-color: #fff;
-    opacity: 0.9;
+	align-items: center;
+	z-index: 99;
+	background-color: #fff;
+	opacity: 0.9;
 }

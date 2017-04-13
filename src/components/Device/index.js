@@ -21,12 +21,6 @@ class Device extends React.Component {
 		)
 	}
 
-	getCurrentDate (timestamp) {
-		var d = new Date(0)
-		d.setUTCSeconds(timestamp)
-		return UTCToLocalTime(d).getTime()
-	}
-
 	generateConnectivitySeriesFlags () {
 		const connectionFlagsData = []
 
@@ -35,7 +29,7 @@ class Device extends React.Component {
 		connectionMessages && Object.keys(connectionMessages).map((timestamp) => {
 			if (connectionMessages[timestamp].value) {
 				connectionFlagsData.push({
-					x: this.getCurrentDate(timestamp),
+					x: UTCToLocalTime(timestamp),
 					title: 'Online'
 				})
 			}
@@ -52,7 +46,7 @@ class Device extends React.Component {
 		motionMessages && Object.keys(motionMessages).map((timestamp) => {
 			if (motionMessages[timestamp].value == 1) {
 				motionFlagsData.push({
-					x: this.getCurrentDate(timestamp),
+					x: UTCToLocalTime(timestamp),
 					title: 'Motion'
 				})
 			}
@@ -68,9 +62,11 @@ class Device extends React.Component {
 		const tempHumMessages = this.props.messagesByTopics[config.topics.data['temp-hum']]
 
 		tempHumMessages && Object.keys(tempHumMessages).map((timestamp) => {
+			const localTime = UTCToLocalTime(timestamp)
+
 			if (tempHumMessages[timestamp].value) {
-				tempSeriesData.push([this.getCurrentDate(timestamp), tempHumMessages[timestamp].value.temperature ])
-				humiditySeriesData.push([this.getCurrentDate(timestamp), tempHumMessages[timestamp].value.humidity ])
+				tempSeriesData.push([localTime, tempHumMessages[timestamp].value.temperature ])
+				humiditySeriesData.push([localTime, tempHumMessages[timestamp].value.humidity ])
 			}
 		})
 
@@ -84,14 +80,16 @@ class Device extends React.Component {
 		const gasMessages = this.props.messagesByTopics[config.topics.data.gas]
 
 		gasMessages && Object.keys(gasMessages).map((timestamp) => {
-			(gasMessages[timestamp].value > 40) && gasFlagsData.push({
-				x: this.getCurrentDate(timestamp),
+			const localTime = UTCToLocalTime(timestamp)
+
+			gasMessages[timestamp].value > 40 ? gasFlagsData.push({
+				x: localTime,
 				y: gasMessages[timestamp].value,
 				id: timestamp,
 				title: 'Smoke'
-			})
+			}) : null
 
-			gasSeriesData.push([this.getCurrentDate(timestamp), gasMessages[timestamp].value ])
+			gasSeriesData.push([localTime, gasMessages[timestamp].value ])
 		})
 
 		return { gasSeriesData, gasFlagsData }
@@ -113,34 +111,35 @@ class Device extends React.Component {
 			<li className='device-container'>
 				<div className='device-graphics-container'>
 					<div className='device-data-container'>
-						<div className='device-name-label'>
-							<b>Device:</b> { deviceId }
-						</div>
-						<div className='device-connectivity'>
-							<span className='device-connectivity-value'>
-								{ isConnected ? 'Online' : 'Offline' }
-							</span>
-						</div>
-						<div className='device-last-motion'>
-							<b>Last motion detected: </b>
-							<span className='device-last-motion-value'>
-								{ this.state.lastMotionDetectedLabel }
-							</span>
+						<div className='device-data-text'>
+							<div className='device-name-label'>
+								<b>#</b> { deviceId }
+							</div>
+							<div className='device-connectivity'>
+								<span className='device-connectivity-value'>
+									{ isConnected ? 'Online' : 'Offline' }
+								</span>
+							</div>
+							<div className='device-last-motion'>
+								<b>Motion: </b>
+								<span className='device-last-motion-value'>
+									{ this.state.lastMotionDetectedLabel }
+								</span>
+							</div>
 						</div>
 						<Timeline
 							id={`test-timeline-${deviceId}`}
-							title='Timeline data from sensors'
 							seriesData={ [humiditySeriesData, gasSeriesData, tempSeriesData, gasFlagsData, motionFlagsData, connectionFlagsData] } />
 					</div>
 					<div className='gauges-container'>
-						<Gauge id={`gas-${deviceId}`} title="Smoke concentration" metric='%'
-							color='#777'
+						<Gauge id={`gas-${deviceId}`} title="Smoke" metric='%'
+							color={config.colors.gas}
 							value={ lastGasData } />
 						<Gauge id={`${deviceId}`} title="Temperature" metric='&deg;C'
-							color='#FF9933'
+							color={config.colors.temperature}
 							value={ lastDhtData.temperature } />
 						<Gauge id={`hum-${deviceId}`} title="Humidity" metric='%'
-							color='#99CCFF'
+							color={config.colors.humidity}
 							value={ lastDhtData.humidity } />
 					</div>
 				</div>

@@ -1,12 +1,13 @@
 .app-header {
-	background-color: #8C685A;
-	color: #FAFAFA;
+	background-color: #2c3e50;
+	color: #fafafa;
+	font-weight: normal;
 	display: flex;
 	align-items: center;
-	border-bottom: 5px solid #715247;
+	border-bottom: 5px solid #34495e;
 
 	& > * {
-		border-left: 1px solid #715247;
+		border-left: 1px solid #34495e;
 		height: 50px;
 		line-height: 50px;
 		padding: 0 20px;
@@ -22,12 +23,11 @@
 	cursor: pointer;
 
 	&:active {
-		background-color: #715247;
+		background-color: #34495e;
 	}
 }
 
 .header-title {
 	flex-grow: 2;
-	font-weight: normal;
 }
 

@@ -4,6 +4,7 @@ import { connect } from "react-redux"
 import moment from 'moment'
 
 import AppHeader from '../components/AppHeader'
+import Loader from '../components/Loader'
 import Device from '../components/Device/'
 import config from '../config'
 
@@ -71,6 +72,10 @@ export class MainScreen extends React.Component {
 				
 				<ul className='devices-list'>
 					{
+						Object.keys(messages).length === 0 ? 
+
+						<Loader /> :
+						
 						Object.keys(messages).map((deviceId) => (
 							<Device
 								ref={ this.addDeviceReference.bind(this, deviceId) }

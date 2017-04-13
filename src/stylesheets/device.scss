@@ -1,14 +1,14 @@
 .device-container {
 	background-color: #fff;
-	box-shadow: 2px 2px 3px #ccc;
-	-webkit-box-shadow: 2px 2px 3px #ccc;
+	box-shadow: 2px 2px 3px #bbb;
+	-webkit-box-shadow: 2px 2px 3px #bbb;
 	width: 100%;
 	margin: 20px 0;
-    overflow: hidden;
 }
 
 .timeline {
 	height: 380px;
+	padding-top: 15px;
 }
 
 .device-graphics-container {
@@ -22,6 +22,27 @@
 	box-sizing: border-box;
 }
 
+.device-data-text {
+	display: flex;
+	padding: 10px;
+	font-size: 13px;
+
+	& > * {
+		padding:0 5px;
+		border-right: 1px solid #ccc;
+		line-height: 15px;
+
+		&:first-child {
+			padding-left: 0;
+		}
+
+		&:last-child {
+			padding-right: 0;
+			border-right: 0;
+		}
+	}
+}
+
 .gauges-container {
 	width: 180px;
 	border-left: 1px solid #ccc;
@@ -32,12 +53,6 @@
 
 .highcharts-credits {
 	display: none;
-}
-
-.device-name-label, .device-connectivity, .device-last-motion {
-	line-height: 15px;
-	padding-left: 10px;
-	padding-top: 10px;
 }
 
 .highcharts-legend-item {
