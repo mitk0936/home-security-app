@@ -95,23 +95,20 @@ class Timeline extends React.Component {
 				name: 'Smoke detected',
 				data: [],
 				color: '#777',
-				y: -20,
-				x: -20,
-				shape: 'squarepin'
+				y: 10
 			}, {
 				type: 'flags',
 				id: 'motion-flags',
 				name: 'Motion detected',
 				data: [],
-				color: config.colors.motion,
-				shape: 'squarepin'
+				color: config.colors.motion
 			}, {
 				type: 'flags',
 				id: 'connection-flags',
 				name: 'Connectivity changes',
 				data: [],
 				color: config.colors.connectivity,
-				shape: 'squarepin'
+				y: 20
 			}]
 		}
 	}

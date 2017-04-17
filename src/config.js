@@ -22,6 +22,10 @@ const config = {
 		gas: '#7f8c8d',
 		motion: '#c0392b',
 		connectivity: '#34495e'
+	},
+	sensorValuesLimits: {
+		'motion': 1,
+		'gas': 47
 	}
 }
 

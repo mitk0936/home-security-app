@@ -1,4 +1,4 @@
-import { take, call, put } from 'redux-saga/effects'
+import { take, call, put, fork } from 'redux-saga/effects'
 import { takeLatest, delay } from 'redux-saga'
 import { store } from '../store'
 import * as actions from '../actions'
@@ -54,9 +54,21 @@ export function* watchMqttConnect () {
 
 				reconnectsLeft = config.mqtt.allowedReconnects
 
-				yield take(actions.CONNECTION_LOST)
-				yield put(actions.connectMqtt({ username, password, reconnect: true }))
+				const { type } = yield take([
+					actions.CONNECTION_LOST,
+					actions.USER_LOGOUT
+				])
+
+				switch (type) {
+					case actions.CONNECTION_LOST:
+						yield put(actions.connectMqtt({ username, password, reconnect: true }));
+						break;
+					case actions.USER_LOGOUT:
+						client.disconnect()
+						yield put(actions.navigate(config.paths.login))
+				}
 			} catch (e) {
+				console.log('Error with connection', e.message)
 
 				if (!reconnect) {
 					alert('Unable to login. Please, try again.')

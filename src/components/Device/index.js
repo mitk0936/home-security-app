@@ -44,7 +44,7 @@ class Device extends React.Component {
 		const motionMessages = this.props.messagesByTopics[config.topics.data.motion]
 
 		motionMessages && Object.keys(motionMessages).map((timestamp) => {
-			if (motionMessages[timestamp].value == 1) {
+			if (motionMessages[timestamp].value == config.sensorValuesLimits.motion) {
 				motionFlagsData.push({
 					x: UTCToLocalTime(timestamp),
 					title: 'Motion'
@@ -82,12 +82,13 @@ class Device extends React.Component {
 		gasMessages && Object.keys(gasMessages).map((timestamp) => {
 			const localTime = UTCToLocalTime(timestamp)
 
-			gasMessages[timestamp].value > 40 ? gasFlagsData.push({
-				x: localTime,
-				y: gasMessages[timestamp].value,
-				id: timestamp,
-				title: 'Smoke'
-			}) : null
+			gasMessages[timestamp].value >= config.sensorValuesLimits.gas ?
+				gasFlagsData.push({
+					x: localTime,
+					y: gasMessages[timestamp].value,
+					id: timestamp,
+					title: 'Smoke'
+				}) : null
 
 			gasSeriesData.push([localTime, gasMessages[timestamp].value ])
 		})

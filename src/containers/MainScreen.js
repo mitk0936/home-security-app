@@ -3,9 +3,12 @@ import React from "react"
 import { connect } from "react-redux"
 import moment from 'moment'
 
+import { userLogout } from '../actions'
+
 import AppHeader from '../components/AppHeader'
 import Loader from '../components/Loader'
 import Device from '../components/Device/'
+import SecurityAlertsPopup from '../components/SecurityAlertsPopup'
 import config from '../config'
 
 export class MainScreen extends React.Component {
@@ -64,11 +67,11 @@ export class MainScreen extends React.Component {
 	}
 
 	render () {
-		const { messages, devicesState, reconnecting } = this.props
+		const { messages, devicesState, reconnecting, securityAlerts } = this.props
 
 		return (
 			<section>
-				<AppHeader />
+				<AppHeader onLogout={this.props.userLogout}/>
 				
 				<ul className='devices-list'>
 					{
@@ -87,7 +90,12 @@ export class MainScreen extends React.Component {
 					}
 				</ul>
 
-				{ reconnecting ? this.renderReconnectingOverlay() : null }
+				{
+					reconnecting ?
+					this.renderReconnectingOverlay() :
+					<SecurityAlertsPopup securityAlerts={securityAlerts} />
+				}
+
 			</section>
 		)
 	}
@@ -101,15 +109,18 @@ export class MainScreen extends React.Component {
 
 MainScreen.propTypes = {
 	devicesState: React.PropTypes.object.isRequired,
-	messages: React.PropTypes.object.isRequired
+	messages: React.PropTypes.object.isRequired,
+	securityAlerts: React.PropTypes.object.isRequired,
+	userLogout: React.PropTypes.func.isRequired
 }
 
 function mapStateToProps (state, ownProps) {
 	return {
-		devicesState: state.user.devicesState,
-		messages: state.user.messages,
+		...state.data,
 		reconnecting: state.user.reconnecting
 	}
 }
 
-export default connect(mapStateToProps, {})(MainScreen);
+export default connect(mapStateToProps, {
+	userLogout
+})(MainScreen);

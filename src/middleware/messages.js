@@ -1,7 +1,24 @@
 import { take, call, put } from 'redux-saga/effects'
+import { takeEvery } from 'redux-saga'
 import * as actions from '../actions'
 
 import config from '../config'
+
+export function* watchNotificationCheck () {
+	yield takeEvery(actions.SET_DEVICE_STATE, function* ({ deviceId, topic, value, retained }) {
+		switch (topic) {
+			case config.topics.data.motion:
+			case config.topics.data.gas:
+
+				if (config.sensorValuesLimits[topic] <= value && !retained) {
+					yield put(actions.pushSecurityAlert({
+						timestamp: new Date().getTime(),
+						...{ deviceId, topic, value }
+					}))
+				}
+		}
+	})
+}
 
 /*
 	Middleware watcher for setting new device status (connectivity and motion)
@@ -13,8 +30,13 @@ export function* watchDevicesStatus () {
 		switch (topic) {
 			case config.topics.data.motion:
 				/* update device status for new motion detected */
-				if (message.value === 1) {
-					yield put(actions.setDeviceState({ deviceId, topic, value: message.timestamp }))
+				if (message.value === config.sensorValuesLimits.motion) {
+					yield put(actions.setDeviceState({
+						deviceId,
+						topic,
+						value: message.timestamp,
+						retained: message.retained
+					}))
 				}
 				
 				break;
@@ -24,12 +46,23 @@ export function* watchDevicesStatus () {
 					if new temperature and humidity is detected
 				*/
 				if (message.value) {
-					yield put(actions.setDeviceState({ deviceId, topic, value: message.value }))
+					yield put(actions.setDeviceState({
+						deviceId,
+						topic,
+						value: message.value,
+						retained: message.retained
+					}))
 				}
 
 				break;
-			case config.topics.data['gas']:
-				yield put(actions.setDeviceState({ deviceId, topic, value: message.value }))
+			case config.topics.data.gas:
+				yield put(actions.setDeviceState({
+					deviceId,
+					topic,
+					value: message.value,
+					retained: message.retained
+				}))
+
 				break;
 		}
 
@@ -48,7 +81,8 @@ export function* watchDevicesStatus () {
 			yield put(actions.setDeviceState({
 				deviceId,
 				topic: config.topics.data.connectivity,
-				value: deviceIsConnected 
+				value: deviceIsConnected,
+				retained: message.retained
 			}))
 		}
 

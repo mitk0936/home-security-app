@@ -14,7 +14,9 @@ const render = () => {
 	)
 }
 
-if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
+var isRunningCordova = document.URL.indexOf( 'http://' ) === -1;
+
+if (isRunningCordova) {
 	document.addEventListener("deviceready", render, false);
 } else {
 	render()

@@ -22,6 +22,10 @@ export const userLogout = () => action(USER_LOGOUT)
 
 /* Messages middleware actions */
 export const SET_DEVICE_STATE = 'SET_DEVICE_STATE'
+export const PUSH_SECURITY_ALERT = 'PUSH_SECURITY_ALERT'
+export const REMOVE_SECURITY_ALERT = 'REMOVE_SECURITY_ALERT'
 
-export const setDeviceState = ({deviceId, topic, value}) => action(SET_DEVICE_STATE, {deviceId, topic, value})
+export const setDeviceState = ({deviceId, topic, value, retained}) => action(SET_DEVICE_STATE, {deviceId, topic, value, retained})
 
+export const pushSecurityAlert = ({timestamp, deviceId, topic, value, retained}) => action(PUSH_SECURITY_ALERT, {timestamp, deviceId, topic, value, retained})
+export const removeSecurityAlert = ({timestamp}) => action(REMOVE_SECURITY_ALERT, {timestamp})

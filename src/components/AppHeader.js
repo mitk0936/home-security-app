@@ -6,16 +6,13 @@ import { userLogout } from '../actions'
 import '../stylesheets/app-header.scss'
 
 export class AppHeader extends React.Component {
-
-	logout () { }
-
 	render () {
 		return (
 			<div className='app-header'>
 				<h1 className='header-title'>
 					Your devices
 				</h1>
-				<a onClick={ this.logout } className='logout-link'>
+				<a onClick={ this.props.userLogout } className='logout-link'>
 					Logout
 				</a>
 			</div>
