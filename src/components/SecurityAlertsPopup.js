@@ -29,6 +29,8 @@ class SecurityAlertsPopup extends React.Component {
 	getLabel (timestamp) {
 		const alert = this.props.securityAlerts[timestamp]
 		switch (alert.topic) {
+			case config.topics.data.connectivity:
+				return `#${alert.deviceId} - Device went offline`
 			case config.topics.data.gas:
 				return `#${alert.deviceId} - High gas concentration value was measured - ${alert.value}%`
 			case config.topics.data.motion:

@@ -24,6 +24,7 @@ const config = {
 		connectivity: '#34495e'
 	},
 	sensorValuesLimits: {
+		'connectivity': 0,
 		'motion': 1,
 		'gas': 47
 	}

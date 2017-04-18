@@ -14,7 +14,7 @@ const render = () => {
 	)
 }
 
-var isRunningCordova = document.URL.indexOf( 'http://' ) === -1;
+const isRunningCordova = document.URL.indexOf( 'http://' ) === -1;
 
 if (isRunningCordova) {
 	document.addEventListener("deviceready", render, false);

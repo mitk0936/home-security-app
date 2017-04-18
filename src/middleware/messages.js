@@ -2,20 +2,34 @@ import { take, call, put } from 'redux-saga/effects'
 import { takeEvery } from 'redux-saga'
 import * as actions from '../actions'
 
+import { beep, vibrate } from '../services/notificationService'
+
 import config from '../config'
 
 export function* watchNotificationCheck () {
 	yield takeEvery(actions.SET_DEVICE_STATE, function* ({ deviceId, topic, value, retained }) {
+		let alertFlag = false
+
 		switch (topic) {
+			case config.topics.data.connectivity:
+				alertFlag = (config.sensorValuesLimits[topic] == value)
+				break;
 			case config.topics.data.motion:
 			case config.topics.data.gas:
+				alertFlag = (config.sensorValuesLimits[topic] <= value)
+		}
 
-				if (config.sensorValuesLimits[topic] <= value && !retained) {
-					yield put(actions.pushSecurityAlert({
-						timestamp: new Date().getTime(),
-						...{ deviceId, topic, value }
-					}))
-				}
+		if (alertFlag) {
+			yield put(actions.pushSecurityAlert({
+				timestamp: new Date().getTime(),
+				...{ deviceId, topic, value }
+			}))
+
+			if (!retained) {
+				// notify user
+				beep(1)
+				vibrate(500)
+			}
 		}
 	})
 }

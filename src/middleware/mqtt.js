@@ -5,6 +5,8 @@ import * as actions from '../actions'
 import { user } from '../selectors'
 import config from '../config'
 
+import { fireNotification } from '../services/notificationService'
+
 import { pahoMqttConnect } from '../services/mqttConnect'
 
 const onMessageArrived = (message) => {
@@ -32,6 +34,10 @@ const onMessageArrived = (message) => {
 
 const onConnectionLost = () => store.dispatch(actions.connectionLost())
 
+const disconnect = function* (client) {
+	client && client.disconnect()
+	yield put(actions.navigate(config.paths.login))
+}
 
 /*
 	Middleware watcher for the MQTT connect action
@@ -45,7 +51,12 @@ export function* watchMqttConnect () {
 
 		if (!reconnect || allowedToReconnect) {
 			try {				
-				const { client } = yield call(pahoMqttConnect, { username, password }, onMessageArrived, onConnectionLost)
+				const { client } = yield call(
+					pahoMqttConnect,
+					{ username, password },
+					onMessageArrived,
+					onConnectionLost
+				)
 				
 				yield put(actions.userLogged({ username }))
 				yield put(actions.navigate(config.paths.devices))
@@ -64,14 +75,16 @@ export function* watchMqttConnect () {
 						yield put(actions.connectMqtt({ username, password, reconnect: true }));
 						break;
 					case actions.USER_LOGOUT:
-						client.disconnect()
-						yield put(actions.navigate(config.paths.login))
+						yield call(disconnect, client)
 				}
 			} catch (e) {
-				console.log('Error with connection', e.message)
-
 				if (!reconnect) {
-					alert('Unable to login. Please, try again.')
+					yield call(fireNotification, {
+						message: 'Please, try again.',
+						title: 'Unable to connect',
+						buttonText: 'OK'
+					})
+
 					return
 				}
 
@@ -83,12 +96,14 @@ export function* watchMqttConnect () {
 			return
 		}
 
-
-		alert('Ooops. Looks like you lost network connectivity.')
+		yield call(fireNotification, {
+			message: 'Ooops. Looks like you lost network connectivity.',
+			title: 'Network Problem',
+			buttonText: 'OK'
+		}, 2, 2000)
 			
 		reconnectsLeft = config.mqtt.allowedReconnects
-
 		yield(put(actions.userLogout()))
-		yield put(actions.navigate(config.paths.login))
+		yield call(disconnect)
 	})
 }
