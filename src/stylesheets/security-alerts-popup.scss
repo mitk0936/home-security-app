@@ -12,7 +12,6 @@
 	cursor: pointer;
 	text-align: center;
 	border-radius: 100%;
-
 	-webkit-animation: pulsate 4s ease-out;
     -webkit-animation-iteration-count: infinite; 
 }
@@ -20,24 +19,48 @@
 .security-alert-title {
 	width: 100%;
 	height: 50px;
-	line-height:50px;
-	text-align: center;
+	text-align: left;
 	border-bottom: 1px solid #ccc;
 	background-color: #eee;
-	font-size: 15px;
+	font-size: 20px;
+	font-weight: normal;
+	text-indent: 20px;
+	display: flex;
+	align-items: center;
+	background-color: #eee;
+
+	& > * {
+		line-height: 50px;
+	}
+
+	.clear-all-alerts {
+		flex-grow: 2;
+		text-align: center;
+		cursor: pointer;
+
+		&:active {
+			text-decoration: underline;
+		}
+	}
 }
 
 .security-alert-popup {
 	background-color: #fff;
 	margin: 50px auto;
-	width: 80%;
+	width: 300px;
 
 	ul.alerts-list li {
-		height: 50px;
-		padding: 0 20px;
+		padding: 10px 20px;
 		display: flex;
-		align-items: center;
+		flex-direction: column;
 		font-size: 13px;
+		line-height: 20px;
+		border-bottom: 1px solid #ccc;
+
+		.alert-time {
+			font-weight: bold;
+			font-size: 15px;
+		}
 	}
 }
 

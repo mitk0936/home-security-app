@@ -15,6 +15,7 @@ export const CONNECTION_LOST = 'CONNECTION_LOST'
 export const USER_LOGOUT = 'USER_LOGOUT'
 export const SET_USER_ALERTS_SETTINGS = 'SET_USER_ALERTS_SETTINGS'
 export const UPDATE_USER_ALERTS_SETTINGS = 'UPDATE_USER_ALERTS_SETTINGS'
+export const CLEAR_ALERTS = 'CLEAR_ALERTS'
 
 export const connectMqtt = ({username, password, broker, port, reconnect}) => action(CONNECT_MQTT, {username, password, broker, port, reconnect: Boolean(reconnect)})
 export const userLogged = ({ username, broker, port }) => action(USER_LOGGED, { username, broker, port })
@@ -33,3 +34,4 @@ export const pushSecurityAlert = ({timestamp, deviceId, topic, value, retained})
 export const removeSecurityAlert = ({timestamp}) => action(REMOVE_SECURITY_ALERT, {timestamp})
 export const setUserAlertsSettings = ({ settings }) => action(SET_USER_ALERTS_SETTINGS, { settings })
 export const updateUserAlertsSettings = ({ deviceId, flag }) => action(UPDATE_USER_ALERTS_SETTINGS, { deviceId, flag })
+export const clearAlerts = () => action(CLEAR_ALERTS)

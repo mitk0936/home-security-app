@@ -27,15 +27,18 @@
 	padding: 10px;
 	font-size: 13px;
 	position:absolute;
-	top: - 35px;
-	text-transform: uppercase;
+	top: -35px;
 	background-color: #777;
 	border-radius: 3px 3px 0 0;
 	color: #fff;
 
+	&.online {
+		background-color: #27ae60;
+	}
+
 	& > * {
-		padding:0 5px;
-		border-right: 1px solid #ccc;
+		padding:0 10px;
+		border-right: 1px solid #fff;
 		line-height: 15px;
 
 		&:first-child {
@@ -85,6 +88,6 @@
 	font-size: 13px;
 
 	.onoffswitch {
-		margin-left: 10px;
+		margin-left: 15px;
 	}
 }

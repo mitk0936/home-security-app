@@ -113,7 +113,7 @@ class Device extends React.Component {
 			<li className='device-container'>
 				<div className='device-graphics-container'>
 					<div className='device-data-container'>
-						<div className='device-data-text'>
+						<div className={`device-data-text ${ isConnected ? 'online' : '' }`}>
 							<div className='device-name-label'>
 								<b>#</b> { deviceId }
 							</div>

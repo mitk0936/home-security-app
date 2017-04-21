@@ -7,6 +7,7 @@ import Loader from '../components/Loader'
 import Device from '../components/Device/'
 import SecurityAlertsPopup from '../components/SecurityAlertsPopup'
 import config from '../config'
+import { clearAlerts } from '../actions'
 
 export class MainScreen extends React.Component {
 	constructor (props) {
@@ -93,7 +94,9 @@ export class MainScreen extends React.Component {
 				{
 					reconnecting ?
 					this.renderReconnectingOverlay() :
-					<SecurityAlertsPopup securityAlerts={securityAlerts} />
+					<SecurityAlertsPopup
+						securityAlerts={securityAlerts}
+						onClose={this.props.clearAlerts} />
 				}
 
 			</section>
@@ -124,5 +127,5 @@ function mapStateToProps (state, ownProps) {
 }
 
 export default connect(mapStateToProps, {
-	userLogout, updateUserAlertsSettings
+	userLogout, updateUserAlertsSettings, clearAlerts
 })(MainScreen);

@@ -57,9 +57,9 @@ export default function data (state = defaultState, action) {
 					}
 				})
 			})
-		case actions.REMOVE_SECURITY_ALERT:
+		case actions.CLEAR_ALERTS:
 			return Object.assign({}, state, {
-				securityAlerts: removeByKey(state.securityAlerts, action.timestamp)
+				securityAlerts: {}
 			})
 		case actions.USER_LOGOUT:
 			return defaultState

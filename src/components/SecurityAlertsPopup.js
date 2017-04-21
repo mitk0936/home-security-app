@@ -25,11 +25,15 @@ class SecurityAlertsPopup extends React.Component {
 		this.setState({
 			openned: state
 		})
+
+		if (!state) {
+			this.props.onClose()
+		}
 	}
 
 	formatDate (timestamp) {
 		if (parseInt(timestamp, 10)) {
-			return moment(timestamp, 'x').format('DD MMM YYYY HH:mm')
+			return moment(timestamp, 'x').format('HH:mm, DD MMM YYYY')
 		}
 
 		return 'Unspecified date'
@@ -50,7 +54,9 @@ class SecurityAlertsPopup extends React.Component {
 					wrapperCssClass='security-alert-popup'
 					onTap={this.toggle.bind(this, false)}>
 					<div className='security-alert-title'>
-						<h2>Security Alerts ({alertsCount})</h2>
+						<div>
+							Security Alerts ({alertsCount})
+						</div>
 					</div>
 					<ul className='alerts-list'>
 						{
@@ -58,11 +64,13 @@ class SecurityAlertsPopup extends React.Component {
 								.sort()
 								.reverse()
 								.map((timestamp) => (
-									<li key={timestamp}>
-										{`
-											${this.formatDate(timestamp)}, 
-											${this.getLabel(timestamp)}
-										`}
+									<li key={ timestamp }>
+										<div className='alert-time'>
+											{ this.formatDate(timestamp) }
+										</div>
+										<div className='alert-label'>
+											{ this.getLabel(timestamp) }
+										</div>
 									</li>
 								))
 						}
@@ -85,7 +93,8 @@ class SecurityAlertsPopup extends React.Component {
 }
 
 SecurityAlertsPopup.PropTypes = {
-	securityAlerts: React.PropTypes.object.isRequired
+	securityAlerts: React.PropTypes.object.isRequired,
+	onClose: React.PropTypes.func.isRequired
 }
 
 SecurityAlertsPopup.defaultProps = {
