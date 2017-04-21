@@ -1,15 +1,24 @@
-import { take, call, put } from 'redux-saga/effects'
+import { take, call, put, select } from 'redux-saga/effects'
 import { takeEvery } from 'redux-saga'
 import * as actions from '../actions'
-
-import { beep, vibrate } from '../services/notificationService'
-
+import { beep, vibrate, fireAToast } from '../services/notificationService'
+import { generateSecurityAlertLabel } from '../utils/helper'
+import { userAlertsSettings } from '../selectors'
 import config from '../config'
 
 export function* watchNotificationCheck () {
-	yield takeEvery(actions.SET_DEVICE_STATE, function* ({ deviceId, topic, value, retained }) {
+	yield takeEvery(actions.SET_DEVICE_STATE, function* ({ deviceId, topic, value, retained, timestamp }) {
+
+		/* If the user set alerts off for this device, app is not firing a notification */
+		const alertSettings = yield select(userAlertsSettings)
+		if (!alertSettings[deviceId]) { return }
+
 		let alertFlag = false
 
+		/*
+			The alertFlag detects, whether if
+			a security alert is needed
+		*/
 		switch (topic) {
 			case config.topics.data.connectivity:
 				alertFlag = (config.sensorValuesLimits[topic] == value)
@@ -21,12 +30,15 @@ export function* watchNotificationCheck () {
 
 		if (alertFlag) {
 			yield put(actions.pushSecurityAlert({
-				timestamp: new Date().getTime(),
+				timestamp: parseInt(timestamp, 10) * 1000, // convert to milliseconds
 				...{ deviceId, topic, value }
 			}))
 
+			/* Notify user, if the message is not retained (a new one) */
 			if (!retained) {
-				// notify user
+				/* Open a toast message for the security alert */
+				const toastText = generateSecurityAlertLabel({topic, deviceId, value})
+				fireAToast(toastText)
 				beep(1)
 				vibrate(500)
 			}
@@ -49,7 +61,8 @@ export function* watchDevicesStatus () {
 						deviceId,
 						topic,
 						value: message.timestamp,
-						retained: message.retained
+						retained: message.retained,
+						timestamp: message.timestamp
 					}))
 				}
 				
@@ -64,17 +77,23 @@ export function* watchDevicesStatus () {
 						deviceId,
 						topic,
 						value: message.value,
-						retained: message.retained
+						retained: message.retained,
+						timestamp: message.timestamp
 					}))
 				}
 
 				break;
 			case config.topics.data.gas:
+				/*
+					update device status,
+					if new gas is detected
+				*/
 				yield put(actions.setDeviceState({
 					deviceId,
 					topic,
 					value: message.value,
-					retained: message.retained
+					retained: message.retained,
+					timestamp: message.timestamp
 				}))
 
 				break;
@@ -96,14 +115,9 @@ export function* watchDevicesStatus () {
 				deviceId,
 				topic: config.topics.data.connectivity,
 				value: deviceIsConnected,
-				retained: message.retained
+				retained: message.retained,
+				timestamp: message.timestamp
 			}))
 		}
-
-		/*
-			TODO:
-			Dispatch action for Notificating the user,
-			if the device went offline, or motion is detected
-		*/
 	}
 }	

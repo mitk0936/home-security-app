@@ -1,11 +1,14 @@
 import PahoMQTT from 'paho.mqtt.js'
 import config from '../config'
 
-export function pahoMqttConnect ({ username, password }, onMessageArrived, onConnectionLost) {
+/*
+	Makes a connection to the broker via PahoMQTT library.
+	Returns a promise.
+*/
+export function pahoMqttConnect ({ username, password, broker, port }, onMessageArrived, onConnectionLost) {
 	return new Promise ((resolve, reject) => {
 		const clientId = `client-${parseInt(Math.random() * 10000)}`
-		const { host, port } = config.mqtt
-		const client = new PahoMQTT.Client(host, port, clientId)
+		const client = new PahoMQTT.Client(broker, parseInt(port, 10), clientId)
 
 		client.onMessageArrived = onMessageArrived
 		client.onConnectionLost = onConnectionLost

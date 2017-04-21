@@ -10,10 +10,10 @@ export class AppHeader extends React.Component {
 		return (
 			<div className='app-header'>
 				<h1 className='header-title'>
-					Your devices
+					Devices dashboard
 				</h1>
 				<a onClick={ this.props.userLogout } className='logout-link'>
-					Logout
+					Log out
 				</a>
 			</div>
 		)

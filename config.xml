@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="dm.security.app" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>SecurityApp</name>
+    <name>SecurityApp 1.0</name>
     <description>
         Application for monitoring home and office security
     </description>
@@ -28,4 +28,5 @@
     <plugin name="cordova-plugin-whitelist" spec="1" />
     <plugin name="cordova-plugin-vibration" spec="~2.1.4" />
     <plugin name="cordova-plugin-dialogs" spec="~1.3.2" />
+    <plugin name="cordova-plugin-x-toast" spec="~2.6.0" />
 </widget>

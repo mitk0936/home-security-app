@@ -35,3 +35,28 @@ body {
 	background-color: #fff;
 	opacity: 0.9;
 }
+
+input {
+	display: block;
+	padding: 10px;
+	border-radius: 3px;
+	border: 0;
+	border-bottom: 1px solid #777;
+	margin: 20px 0;
+	width: 190px;
+	outline: none;
+	box-sizing: border-box;
+	background-color: transparent;
+
+	&[type='submit'] {
+		cursor: pointer;
+		text-transform: uppercase;
+		color: #333;
+		border: 1px solid #777;
+
+		&:active {
+			background-color: #777;
+			color: #fff;
+		}
+	}
+} 

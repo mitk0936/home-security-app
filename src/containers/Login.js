@@ -8,11 +8,15 @@ import '../stylesheets/login.scss'
 class Login extends React.Component {
 	constructor (props) {
 		super(props)
+	}
 
-		this.state = {
-			'username': '',
-			'password': ''
-		}
+	componentWillMount () {
+		this.setState(Object.assign({}, {
+			username: '',
+			password: '',
+			broker: '',
+			port: ''
+		}, this.props.userCachedData))
 	}
 
 	onInputChange (propName, ev) {
@@ -22,8 +26,8 @@ class Login extends React.Component {
 	}
 
 	onSubmit (e) {
-		const { username, password } = this.state
-		this.props.connectMqtt({ username, password })
+		const { username, password, broker, port } = this.state
+		this.props.connectMqtt({ username, password, broker, port })
 
 		e.preventDefault()
 	}
@@ -32,19 +36,42 @@ class Login extends React.Component {
 		return (
 			<div className='login-form'>
 				<form type='POST' onSubmit={ this.onSubmit.bind(this) } >
-					<input type='text' id='username' name='username' placeholder='Username'
+					<input
+						value={this.state.username}
+						required={true}
+						type='text' id='username' name='username' placeholder='Username'
 						onChange={ this.onInputChange.bind(this, 'username') }/>
-					<input type='password' id='password' name='password' placeholder='Password'
+					<input
+						required={true}
+						type='password' id='password' name='password' placeholder='Password'
 						onChange={ this.onInputChange.bind(this, 'password') }/>
-					<input type='submit' value='login'/>
+					<input
+						required={true}
+						value={this.state.broker}
+						type='text' id='broker' name='broker' placeholder='Broker address'
+						onChange={ this.onInputChange.bind(this, 'broker') }/>
+					<input
+						required={true}
+						value={this.state.port}
+						type='text' id='port' name='port' placeholder='Port'
+						onChange={ this.onInputChange.bind(this, 'port') }/>
+					<input type='submit' value='log in'/>
 				</form>
 			</div>
 		)
 	}
 }
 
+Login.propTypes = {
+	userCachedData: React.PropTypes.shape({
+		username: React.PropTypes.string.isRequired,
+		broker: React.PropTypes.string.isRequired,
+		port: React.PropTypes.string.isRequired
+	})
+}
+
 function mapStateToProps (state) {
-	return {}
+	return { userCachedData: state.userCachedData }
 }
 
 export default connect(mapStateToProps, { connectMqtt })(Login)

@@ -1,10 +1,7 @@
 import React from "react"
-
 import { connect } from "react-redux"
 import moment from 'moment'
-
-import { userLogout } from '../actions'
-
+import { userLogout, updateUserAlertsSettings } from '../actions'
 import AppHeader from '../components/AppHeader'
 import Loader from '../components/Loader'
 import Device from '../components/Device/'
@@ -67,7 +64,8 @@ export class MainScreen extends React.Component {
 	}
 
 	render () {
-		const { messages, devicesState, reconnecting, securityAlerts } = this.props
+		const { messages, devicesState, reconnecting, securityAlerts, userAlertsSettings } = this.props
+		const { updateUserAlertsSettings } = this.props
 
 		return (
 			<section>
@@ -84,6 +82,8 @@ export class MainScreen extends React.Component {
 								ref={ this.addDeviceReference.bind(this, deviceId) }
 								key={ deviceId }
 								deviceId={ deviceId }
+								securityAlerts={ Boolean(userAlertsSettings[deviceId]) }
+								onUserAlertsChange={ (flag) => updateUserAlertsSettings({deviceId, flag}) }
 								deviceState= { devicesState[deviceId] }
 								messagesByTopics={ messages[deviceId] } />
 						))
@@ -111,16 +111,18 @@ MainScreen.propTypes = {
 	devicesState: React.PropTypes.object.isRequired,
 	messages: React.PropTypes.object.isRequired,
 	securityAlerts: React.PropTypes.object.isRequired,
-	userLogout: React.PropTypes.func.isRequired
+	userLogout: React.PropTypes.func.isRequired,
+	userAlertsSettings: React.PropTypes.object.isRequired
 }
 
 function mapStateToProps (state, ownProps) {
 	return {
 		...state.data,
-		reconnecting: state.user.reconnecting
+		reconnecting: state.user.reconnecting,
+		userAlertsSettings: state.userAlertsSettings
 	}
 }
 
 export default connect(mapStateToProps, {
-	userLogout
+	userLogout, updateUserAlertsSettings
 })(MainScreen);

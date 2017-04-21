@@ -2,7 +2,6 @@ import React from 'react'
 import HighStock from 'highstock-release'
 import config from '../../config'
 
-
 class Timeline extends React.Component {
 	constructor(props) {
 		super(props)
@@ -64,7 +63,7 @@ class Timeline extends React.Component {
 				color: config.colors.humidity,
 				tooltip: {
 					xDateFormat: '%Y, %d %B %H:%M',
-					valueSuffix: ' %'
+					valueSuffix: '%'
 				}
 			}, {
 				type: 'spline',
@@ -72,7 +71,7 @@ class Timeline extends React.Component {
 				name: 'Measured smoke concentration',
 				tooltip: {
 					xDateFormat: '%Y, %d %B %H:%M',
-					valueSuffix: ' %'
+					valueSuffix: '%'
 				},
 				data: [],
 				color: config.colors.gas
@@ -93,22 +92,32 @@ class Timeline extends React.Component {
 				id: 'gas-flags',
 				linkedTo: 'gas',
 				name: 'Smoke detected',
+				tooltip: {
+					xDateFormat: '%Y, %d %B %H:%M'
+				},
 				data: [],
 				color: '#777',
-				y: 10
+				y: 0
 			}, {
 				type: 'flags',
 				id: 'motion-flags',
 				name: 'Motion detected',
+				tooltip: {
+					xDateFormat: '%Y, %d %B %H:%M'
+				},
 				data: [],
-				color: config.colors.motion
+				color: config.colors.motion,
+				y: -19
 			}, {
 				type: 'flags',
 				id: 'connection-flags',
 				name: 'Connectivity changes',
+				tooltip: {
+					xDateFormat: '%Y, %d %B %H:%M'
+				},
 				data: [],
 				color: config.colors.connectivity,
-				y: 20
+				y: -40
 			}]
 		}
 	}

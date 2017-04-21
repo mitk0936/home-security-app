@@ -3,8 +3,9 @@ import Gauge from '../charts/Gauge'
 import Timeline from '../charts/Timeline'
 import { UTCToLocalTime } from '../../utils/time'
 import config from '../../config'
-
+import OnOffSwitch from '../OnOffSwitch'
 import '../../stylesheets/device.scss'
+
 class Device extends React.Component {
 	constructor (props) {
 		super(props)
@@ -16,7 +17,7 @@ class Device extends React.Component {
 
 	shouldComponentUpdate (nextProps, nextState) {
 		return (
-			JSON.stringify(nextProps.deviceState) !== JSON.stringify(this.props.deviceState) ||
+			JSON.stringify(nextProps) !== JSON.stringify(this.props) ||
 			JSON.stringify(nextState) !== JSON.stringify(this.state)
 		)
 	}
@@ -85,7 +86,7 @@ class Device extends React.Component {
 			gasMessages[timestamp].value >= config.sensorValuesLimits.gas ?
 				gasFlagsData.push({
 					x: localTime,
-					y: gasMessages[timestamp].value,
+					y: 100, // gasMessages[timestamp].value,
 					id: timestamp,
 					title: 'Smoke'
 				}) : null
@@ -97,7 +98,7 @@ class Device extends React.Component {
 	}
 
 	render () {
-		const { messagesByTopics, deviceId, deviceState } = this.props
+		const { messagesByTopics, deviceId, deviceState, securityAlerts, onUserAlertsChange } = this.props
 		
 		const isConnected = deviceState[config.topics.data.connectivity]
 		const lastDhtData = deviceState[config.topics.data['temp-hum']]
@@ -127,6 +128,13 @@ class Device extends React.Component {
 									{ this.state.lastMotionDetectedLabel }
 								</span>
 							</div>
+						</div>
+						<div className='security-alert-option'>
+							Security Alerts
+							<OnOffSwitch
+								id={`security-switch-${deviceId}`}
+								checked={securityAlerts}
+								onChange={onUserAlertsChange}/>
 						</div>
 						<Timeline
 							id={`test-timeline-${deviceId}`}
@@ -163,7 +171,9 @@ Device.propTypes = {
 			humidity: React.PropTypes.number.isRequired
 		}).isRequired
 	}).isRequired,
-	messagesByTopics: React.PropTypes.object.isRequired
+	messagesByTopics: React.PropTypes.object.isRequired,
+	securityAlerts: React.PropTypes.bool.isRequired,
+	onUserAlertsChange: React.PropTypes.func.isRequired
 }
 
 export default Device

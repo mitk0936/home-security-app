@@ -29,8 +29,24 @@ if (process.env.NODE_ENV !== 'production' && window.devToolsExtension) {
 	middleware = compose(middleware, window.devToolsExtension())
 }
 
+
+let userCachedData
+
+try {
+	userCachedData = JSON.parse(window.localStorage.userCachedData)
+} catch (e) {
+	userCachedData = {}
+}
+
 // create the store
-const store = createStore(reducers, middleware)
+const store = createStore(reducers, {
+	userCachedData: {
+		username: userCachedData.username || '',
+		broker: userCachedData.broker || '',
+		port: userCachedData.port || ''
+	}
+}, middleware)
+
 const history = syncHistoryWithStore(browserHistory, store)
 sagaMiddleware.run(sagas)
 

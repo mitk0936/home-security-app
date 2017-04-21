@@ -1,10 +1,10 @@
 import React from "react"
 import Modal from "./Modal"
 import moment from 'moment'
-
 import config from '../config'
-
+import { generateSecurityAlertLabel } from '../utils/helper'
 import '../stylesheets/security-alerts-popup.scss'
+
 class SecurityAlertsPopup extends React.Component {
 	constructor (props) {
 		super(props)
@@ -14,7 +14,7 @@ class SecurityAlertsPopup extends React.Component {
 		}
 	}
 
-	shouldComponentUpdate(nextProps, nextState) {
+	shouldComponentUpdate (nextProps, nextState) {
 		return (
 			JSON.stringify(nextProps) !== JSON.stringify(this.props) ||
 			JSON.stringify(nextState) !== JSON.stringify(this.state)
@@ -26,16 +26,18 @@ class SecurityAlertsPopup extends React.Component {
 			openned: state
 		})
 	}
-	getLabel (timestamp) {
-		const alert = this.props.securityAlerts[timestamp]
-		switch (alert.topic) {
-			case config.topics.data.connectivity:
-				return `#${alert.deviceId} - Device went offline`
-			case config.topics.data.gas:
-				return `#${alert.deviceId} - High gas concentration value was measured - ${alert.value}%`
-			case config.topics.data.motion:
-				return `#${alert.deviceId} - Motion was detected`
+
+	formatDate (timestamp) {
+		if (parseInt(timestamp, 10)) {
+			return moment(timestamp, 'x').format('DD MMM YYYY HH:mm')
 		}
+
+		return 'Unspecified date'
+	}
+
+	getLabel (timestamp) {
+		const { topic, deviceId, value } = this.props.securityAlerts[timestamp]
+		return generateSecurityAlertLabel({ topic, deviceId, value })
 	}
 
 	render () {
@@ -58,7 +60,7 @@ class SecurityAlertsPopup extends React.Component {
 								.map((timestamp) => (
 									<li key={timestamp}>
 										{`
-											${moment(timestamp, 'x').format('DD MMM YYYY HH:mm')}, 
+											${this.formatDate(timestamp)}, 
 											${this.getLabel(timestamp)}
 										`}
 									</li>

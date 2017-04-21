@@ -1,9 +1,12 @@
-const isRunningCordova = document.URL.indexOf( 'http://' ) === -1;
-
+/*
+	Opens an alert message with OK button,
+	to show a mesage
+*/
 export const fireNotification = ( { message, title, buttonText }, beepsCount, vibrationTime ) => {
 	beepsCount = parseInt(beepsCount, 10) || 0
 	vibrationTime = parseInt(vibrationTime, 10) || 0
 
+	/* Calling beep and vibrate, if the params are passed */
 	beepsCount && beep(beepsCount)
 	vibrationTime && vibrate(vibrationTime)
 
@@ -20,14 +23,35 @@ export const fireNotification = ( { message, title, buttonText }, beepsCount, vi
 	})
 }
 
+/*
+	Fires a beep notification on the device
+*/
 export const beep = (times) => {
 	try {
 		navigator.notification.beep(times)
-	} catch (e) { console.error('Beep not supported.') }
+	} catch (e) {
+		console.error('Beep not supported.')
+	}
 }
 
+/*
+	Calls the device vibration for the specified amount of time
+*/
 export const vibrate = (time) => {
 	try {
 		navigator.notification.vibrate(time)
-	} catch (e) { console.error('Vibration not supported.') }
+	} catch (e) {
+		console.error('Vibration not supported.')
+	}
+}
+
+/*
+	Opens a toast message
+*/
+export const fireAToast = (message) => {
+	try {
+		window.plugins.toast.showLongBottom(message)
+	} catch (e) {
+		console.error('Toasts are not supported.')
+	}
 }

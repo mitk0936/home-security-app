@@ -1,19 +1,19 @@
 .device-container {
 	background-color: #fff;
-	box-shadow: 2px 2px 3px #bbb;
-	-webkit-box-shadow: 2px 2px 3px #bbb;
 	width: 100%;
-	margin: 20px 0;
+	margin: 65px 0;
+	position: relative;
 }
 
 .timeline {
-	height: 380px;
+	height: 350px;
 	padding-top: 15px;
 }
 
 .device-graphics-container {
 	display: flex;
 	box-sizing: border-box;
+	border: 1px solid #ccc;
 }
 
 
@@ -26,6 +26,12 @@
 	display: flex;
 	padding: 10px;
 	font-size: 13px;
+	position:absolute;
+	top: - 35px;
+	text-transform: uppercase;
+	background-color: #777;
+	border-radius: 3px 3px 0 0;
+	color: #fff;
 
 	& > * {
 		padding:0 5px;
@@ -64,5 +70,21 @@
 	
 	&:last-child {
 		border: 0
+	}
+}
+
+.security-alert-option {
+	position: absolute;
+	right: 15px;
+	top: -35px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 35px;
+	line-height: 35px;
+	font-size: 13px;
+
+	.onoffswitch {
+		margin-left: 10px;
 	}
 }
