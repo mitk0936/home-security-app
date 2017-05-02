@@ -15,16 +15,22 @@ export class MainScreen extends React.Component {
 
 		this.updateAllReferences = this.updateAllReferences.bind(this)
 		this.updateReferenceByDeviceId = this.updateReferenceByDeviceId.bind(this)
-		this.logout = this.logout.bind(this)
 
 		this.deviceReferences = {}
 		this.intervalUpdate = null
 	}
 
 	componentWillMount () {
+		/* Starting the update interval, which will update last motion label on every component, if needed.
+			interval is set to 20sec.
+		*/
 		this.intervalUpdate = setInterval(this.updateAllReferences, 20 * 1000) // ms
 	}
-
+	
+	/*
+		Called when a new Device component is created.
+		Accepts deviceId and reference to the component as parameters.
+	*/
 	addDeviceReference (deviceId, ref) {
 		this.deviceReferences[deviceId] = ref
 		this.updateReferenceByDeviceId(deviceId)
@@ -34,15 +40,17 @@ export class MainScreen extends React.Component {
 		const { deviceReferences } = this
 		
 		if (deviceReferences[deviceId]) {
-
+			
+			/* Calculating the last motion label for the specific device, on every 20 seconds */
 			const lastMotionTimestamp = this.props.devicesState[deviceId][config.topics.data.motion]
 			const lastMotionSecondsAgo = moment().utc().unix() - parseInt(lastMotionTimestamp)
 			const newLastMotionLabel = `${moment.duration(lastMotionSecondsAgo, 'seconds').humanize()} ago`
-
+	
 			const deviceStateHasChanged = (
 				newLastMotionLabel !== deviceReferences[deviceId].state.lastMotionDetectedLabel
 			)
-
+			
+			/* If the motion label for the specific device has changed - the component is forced to update */
 			if (deviceStateHasChanged) {
 				deviceReferences[deviceId].state.lastMotionDetectedLabel = newLastMotionLabel
 				deviceReferences[deviceId].forceUpdate()
@@ -106,8 +114,6 @@ export class MainScreen extends React.Component {
 	componentWillUnmount () {
 		this.deviceReferences = {}
 	}
-
-	logout () { }	
 }
 
 MainScreen.propTypes = {
