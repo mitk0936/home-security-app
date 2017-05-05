@@ -55,18 +55,13 @@ export function* watchMqttConnect () {
 	/* getting the configuration for maximum allowed re-connects */
 	let reconnectsLeft = config.mqtt.allowedReconnects
 
-	yield takeLatest(actions.CONNECT_MQTT, function* ({
-		username, password, broker, port, reconnect
-	}) {
-
+	yield takeLatest(actions.CONNECT_MQTT, function* ({ username, password, broker, port, reconnect }) {
 		const allowedToReconnect = (reconnect && reconnectsLeft > 0)
 
 		if (!reconnect || allowedToReconnect) {
 			try {
-				/*
-					Making an attempt to connect to the MQTT broker,
-					client is returned as a result
-				*/
+				/* Making an attempt to connect to the MQTT broker,
+					client is returned as a result */
 				const { client } = yield call(
 					pahoMqttConnect,
 					{ username, password, broker, port },
@@ -76,19 +71,14 @@ export function* watchMqttConnect () {
 				
 				yield put(actions.userLogged({ username, broker, port }))
 
-				/*
-					User is connected, subscribe the client to all
-					available data for his account
-				*/
+				/* User is connected, subscribe the client to all
+					available data for his account */
 				client.subscribe('#')
-
 				reconnectsLeft = config.mqtt.allowedReconnects
 
-				/*
-					Waiting for the next action:
-						- connection lost -> attempt to reconnect
-						- user logout -> go to home screen
-				*/
+				/* Waiting for the next action:
+					- connection lost -> attempt to reconnect
+					- user logout -> go to home screen */
 				const { type } = yield take([
 					actions.CONNECTION_LOST,
 					actions.USER_LOGOUT
@@ -103,15 +93,12 @@ export function* watchMqttConnect () {
 				}
 			} catch (e) {
 				if (!reconnect) {
-					/*
-						In case of problems with logging/connecting to the broker
-					*/
+					/* In case of problems with logging/connecting to the broker */
 					yield call(fireNotification, {
 						message: 'Please check your credentials, your network connectivity and try again.',
 						title: 'Unable to connect',
 						buttonText: 'OK'
 					})
-
 					return
 				}
 
@@ -121,12 +108,11 @@ export function* watchMqttConnect () {
 				*/
 				yield call(delay, 2000)
 				reconnectsLeft--
-
 				yield put(actions.connectMqtt({
 					username, password, broker, port, reconnect: true
 				}))
 			}
-
+			
 			return
 		}
 

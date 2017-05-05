@@ -9,10 +9,7 @@ import '../../stylesheets/device.scss'
 class Device extends React.Component {
 	constructor (props) {
 		super(props)
-
-		this.state = {
-			lastMotionDetectedLabel: 'N/A'
-		}
+		this.state = { lastMotionDetectedLabel: 'N/A' }
 	}
 
 	shouldComponentUpdate (nextProps, nextState) {
@@ -21,10 +18,16 @@ class Device extends React.Component {
 			JSON.stringify(nextState) !== JSON.stringify(this.state)
 		)
 	}
-
+	
+	/* generateConnectivitySeriesFlags: Function used to generate,
+		data structure for the line graphic for connectivity (Online) flags.
+		Returns an array of objects: [{
+			x: Timestamp value in local time,
+			title: 'Online'
+		}...]
+	*/
 	generateConnectivitySeriesFlags () {
 		const connectionFlagsData = []
-
 		const connectionMessages = this.props.messagesByTopics[config.topics.data.connectivity]
 
 		connectionMessages && Object.keys(connectionMessages).map((timestamp) => {
@@ -36,10 +39,16 @@ class Device extends React.Component {
 
 		return connectionFlagsData
 	}
-
+	
+	/* generateMotionSeriesFlags: Function used to generate,
+		data structure for the line graphic for motion detected (Motion) flags.
+		Returns an array of objects: [{
+			x: Timestamp value in local time,
+			title: 'Motion'
+		}...]
+	*/
 	generateMotionSeriesFlags () {
 		const motionFlagsData = []
-
 		const motionMessages = this.props.messagesByTopics[config.topics.data.motion]
 
 		motionMessages && Object.keys(motionMessages).map((timestamp) => {
@@ -53,16 +62,23 @@ class Device extends React.Component {
 
 		return motionFlagsData
 	}
-
+	
+	/* generateTempHumSeriesData: Function used to generate,
+		data structure for the line graphic for temperature and humidity.
+		Returns an object with two arrays:
+		{
+			tempSeriesData: [[localTime, temperatureValue]...],
+			humiditySeriesData: [[localTime, humidityValue]...]
+		}
+	*/
 	generateTempHumSeriesData () {
 		const 	tempSeriesData = [],
-				humiditySeriesData = []
-
-		const tempHumMessages = this.props.messagesByTopics[config.topics.data['temp-hum']]
+				humiditySeriesData = [],
+				tempHumMessages = this.props.messagesByTopics[config.topics.data['temp-hum']]
 
 		tempHumMessages && Object.keys(tempHumMessages).map((timestamp) => {
 			const localTime = UTCToLocalTime(timestamp)
-
+	
 			if (tempHumMessages[timestamp].value) {
 				tempSeriesData.push([localTime, tempHumMessages[timestamp].value.temperature ])
 				humiditySeriesData.push([localTime, tempHumMessages[timestamp].value.humidity ])
@@ -71,11 +87,23 @@ class Device extends React.Component {
 
 		return { tempSeriesData, humiditySeriesData }
 	}
-
+	
+	/* generateGasSeriesData: Function used to generate,
+		data structure for the line graphic for gas levels data.
+		Returns an object with two arrays:
+		{
+			gasSeriesData: [[localTime, gasLevelValue]...],
+			gasFlagsData: [{
+				x: localTime,
+				y: 100, -> always on top of the graphic
+				id: timestamp,
+				title: 'Smoke'
+			}...]
+		}
+	*/
 	generateGasSeriesData () {
 		const gasSeriesData = []
 		const gasFlagsData = []
-
 		const gasMessages = this.props.messagesByTopics[config.topics.data.gas]
 
 		gasMessages && Object.keys(gasMessages).map((timestamp) => {

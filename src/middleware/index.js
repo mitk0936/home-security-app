@@ -7,6 +7,12 @@ import { user, userAlertsSettings } from '../selectors'
 import * as actions from '../actions'
 import config from '../config'
 
+/*
+	Middleware watcher for change in security alert settings of the use,
+	updates the cached in local device storage,
+	data for deviceId and security alerts on/off flag,
+	the data is cached by username.
+*/
 export function* watchUpdateUserAlertsSettings () {
 	yield takeEvery(actions.UPDATE_USER_ALERTS_SETTINGS, function* ({ deviceId, flag }) {
 		const { username } = yield select(user)
@@ -20,6 +26,11 @@ export function* watchUpdateUserAlertsSettings () {
 	})
 }
 
+/*
+	Middleware watcher for user login,
+	updates the cached in local device storage,
+	data for username, broker and port
+*/
 export function* watchUserLogin () {
 	yield takeEvery(actions.USER_LOGGED, function* ({ username, broker, port }) {
 		/* Saving the user login settings in the application localStorage */
@@ -33,10 +44,8 @@ export function* watchUserLogin () {
 			userAlertsSettings = settings[username] || {}
 		} catch (e) {
 			console.error(e.message)
-			/*
-				If userAlertsSettings is not available in the local storage
-				Set default empty object
-			*/
+			/* If userAlertsSettings is not available in the local storage
+				Set default empty object */
 			window.localStorage.userAlertsSettings = JSON.stringify({})
 		}
 
