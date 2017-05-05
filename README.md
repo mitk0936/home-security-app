@@ -13,3 +13,9 @@
 <p>cordova build android</p>
 <p>cordova run android</p>
 <p>cordova run browser</p>
+
+<p>
+	(NOTE) Before building the apk,
+	npm run build-dev or npm run build-prod
+	should be run
+</p>
