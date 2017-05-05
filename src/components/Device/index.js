@@ -28,12 +28,10 @@ class Device extends React.Component {
 		const connectionMessages = this.props.messagesByTopics[config.topics.data.connectivity]
 
 		connectionMessages && Object.keys(connectionMessages).map((timestamp) => {
-			if (connectionMessages[timestamp].value) {
-				connectionFlagsData.push({
-					x: UTCToLocalTime(timestamp),
-					title: 'Online'
-				})
-			}
+			connectionFlagsData.push({
+				x: UTCToLocalTime(timestamp),
+				title: connectionMessages[timestamp].value ? 'Online' : 'Offline'
+			})
 		})
 
 		return connectionFlagsData

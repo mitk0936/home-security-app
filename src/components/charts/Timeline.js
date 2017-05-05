@@ -147,7 +147,7 @@ class Timeline extends React.Component {
 	}
 
 	componentDidMount () {
-		this.chart = HighStock.chart(this.options);
+		this.chart = HighStock.chart(this.options)
 	}
 
 	componentWillUnmount () {

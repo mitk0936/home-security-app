@@ -7,6 +7,7 @@
 
 .timeline {
 	height: 350px;
+	max-width: 100%;
 	padding-top: 15px;
 }
 
@@ -14,12 +15,14 @@
 	display: flex;
 	box-sizing: border-box;
 	border: 1px solid #ccc;
+	overflow-x: auto;
 }
 
 
 .device-data-container {
 	flex-grow: 2;
 	box-sizing: border-box;
+	max-width: 82%;
 }
 
 .device-data-text {

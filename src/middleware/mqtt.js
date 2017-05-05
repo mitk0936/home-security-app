@@ -96,7 +96,7 @@ export function* watchMqttConnect () {
 
 				switch (type) {
 					case actions.CONNECTION_LOST:
-						yield put(actions.connectMqtt({ username, password, reconnect: true }));
+						yield put(actions.connectMqtt({ username, password, broker, port, reconnect: true }));
 						break;
 					case actions.USER_LOGOUT:
 						yield call(disconnect, client)
