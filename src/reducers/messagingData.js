@@ -18,7 +18,7 @@ const defaultState = {
 	securityAlerts: {}
 }
 
-export default function data (state = defaultState, action) {
+export default function messagingData (state = defaultState, action) {
 	switch (action.type) {
 		case actions.MESSAGE_ARRIVED:
 			const { deviceId, topic, message } = action
@@ -48,18 +48,19 @@ export default function data (state = defaultState, action) {
 				})
 			})
 		case actions.PUSH_SECURITY_ALERT:
+			const securityAlertsForDevice = state.securityAlerts[action.deviceId] || {}
+			const securityAlertsTopicsForDevice = securityAlertsForDevice[action.topic] || {}
+
 			return Object.assign({}, state, {
 				securityAlerts: Object.assign({}, state.securityAlerts, {
-					[action.timestamp]: {
-						deviceId: action.deviceId,
-						topic: action.topic,
-						value: action.value
-					}
+					[action.deviceId]: Object.assign({}, securityAlertsForDevice, {
+						[action.topic]: Object.assign({}, securityAlertsTopicsForDevice, {
+							[action.timestamp]: {
+								value: action.value
+							}
+						})
+					})
 				})
-			})
-		case actions.CLEAR_ALERTS:
-			return Object.assign({}, state, {
-				securityAlerts: {}
 			})
 		case actions.USER_LOGOUT:
 			return defaultState

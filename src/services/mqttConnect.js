@@ -7,7 +7,8 @@ import config from '../config'
 */
 export function pahoMqttConnect ({ username, password, broker, port }, onMessageArrived, onConnectionLost) {
 	return new Promise ((resolve, reject) => {
-		const clientId = `client-${parseInt(Math.random() * 10000)}`
+		const clientUniqueHash = new Date().getTime()
+		const clientId = `client-${clientUniqueHash}`
 		const client = new PahoMQTT.Client(broker, parseInt(port, 10), clientId)
 
 		client.onMessageArrived = onMessageArrived
@@ -19,7 +20,7 @@ export function pahoMqttConnect ({ username, password, broker, port }, onMessage
 			password,
 			keepAliveInterval: 10,
 			onSuccess: () => resolve({ client }),
-			onFailure: () => reject({ error: 'login failed' })
+			onFailure: () => reject({ error: 'login_failed' })
 		})
 	})
 }

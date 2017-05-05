@@ -1,60 +1,16 @@
 import React from 'react'
 import HighStock from 'highstock-release'
 import config from '../../config'
+import { timelineOptions } from '../../utils/defaultGraphicsOptions'
 
 class Timeline extends React.Component {
 	constructor(props) {
 		super(props)
 		
-		this.options = {
-			spacing: [0, 0, 0, 0],
-			chart: {
-				renderTo: `timeline-${props.id}`,
-				zoomType: 'x',
-				panning: true
-			},
-			legend: {
-				margin: 15,
-				itemMarginTop: 5,
-				itemMarginBottom: 5,
-				padding: 0,
-				navigation: { enabled: false }
-			},
-			rangeSelector: {
-				enabled: false,
-				inputEnabled: false
-			},
-			xAxis: {
-				type: 'datetime',
-				minTickInterval: 1000
-			},
-			title: { text: '' },
-			tooltip: {
-				followTouchMove: false,
-				crosshairs: true,
-				shadow: false,
-				style: { width: '100px' }
-			},
-			yAxis: [{
-				max: 100,
-				title: {
-					text: 'Sensors Data',
-					style: { fontSize: 14, color: config.colors.gas, fontWeight: 'bold' }
-				},
-				opposite: true,
-				gridLineWidth: 1
-			}],
-			plotOptions: {
-				series: {
-					marker: {
-						symbol: 'circle',
-						radius: 4,
-						lineColor: "#eee",
-						lineWidth: 1
-					},
-					fillOpacity: 0.5
-				}
-			},
+		this.options = Object.assign({}, timelineOptions, {
+			chart: Object.assign({}, timelineOptions.chart, {
+				renderTo: `timeline-${props.id}`
+			}),
 			series: [{
 				type: 'spline',
 				id: 'humidity',
@@ -65,16 +21,6 @@ class Timeline extends React.Component {
 					xDateFormat: '%Y, %d %B %H:%M',
 					valueSuffix: '%'
 				}
-			}, {
-				type: 'spline',
-				id: 'gas',
-				name: 'Measured smoke concentration',
-				tooltip: {
-					xDateFormat: '%Y, %d %B %H:%M',
-					valueSuffix: '%'
-				},
-				data: [],
-				color: config.colors.gas
 			}, {
 				type: 'spline',
 				id: 'temperature',
@@ -88,52 +34,51 @@ class Timeline extends React.Component {
 					useHTML: true
 				}
 			}, {
+				type: 'spline',
+				id: 'gas',
+				name: 'Measured gas level',
+				tooltip: {
+					xDateFormat: '%Y, %d %B %H:%M',
+					valueSuffix: '%'
+				},
+				data: [],
+				color: config.colors.gas
+			}, {
 				type: 'flags',
 				id: 'gas-flags',
 				linkedTo: 'gas',
-				name: 'Smoke detected',
-				tooltip: {
-					xDateFormat: '%Y, %d %B %H:%M'
-				},
+				name: 'High gas levels detected',
+				tooltip: { xDateFormat: '%Y, %d %B %H:%M' },
 				data: [],
 				color: '#777',
-				y: 0
+				y: 10
 			}, {
 				type: 'flags',
 				id: 'motion-flags',
 				name: 'Motion detected',
-				tooltip: {
-					xDateFormat: '%Y, %d %B %H:%M'
-				},
+				tooltip: { xDateFormat: '%Y, %d %B %H:%M' },
 				data: [],
 				color: config.colors.motion,
-				y: -19
+				y: -30
 			}, {
 				type: 'flags',
 				id: 'connection-flags',
-				name: 'Connectivity changes',
-				tooltip: {
-					xDateFormat: '%Y, %d %B %H:%M'
-				},
+				name: 'Device went online',
+				tooltip: { xDateFormat: '%Y, %d %B %H:%M' },
 				data: [],
 				color: config.colors.connectivity,
 				y: -40
 			}]
-		}
+		})
 	}
 
 	componentWillReceiveProps (nextProps) {
-		let shouldRedraw = false
-
-		/* Check for changes in series data */
+		/* Update series data */
 		for (let i = 0; i < nextProps.seriesData.length; i++) {
-			if (JSON.stringify(nextProps.seriesData[i]) !== JSON.stringify(this.props.seriesData[i])) {
-				this.chart.series[i].setData(nextProps.seriesData[i])
-				shouldRedraw = true
-			}
+			this.chart.series[i].setData(nextProps.seriesData[i])
 		}
 
-		shouldRedraw && this.chart.redraw()
+		this.chart.redraw()
 	}
 
 	shouldComponentUpdate () {

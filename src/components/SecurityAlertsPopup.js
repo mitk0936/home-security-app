@@ -25,10 +25,6 @@ class SecurityAlertsPopup extends React.Component {
 		this.setState({
 			openned: state
 		})
-
-		if (!state) {
-			this.props.onClose()
-		}
 	}
 
 	formatDate (timestamp) {
@@ -39,13 +35,61 @@ class SecurityAlertsPopup extends React.Component {
 		return 'Unspecified date'
 	}
 
-	getLabel (timestamp) {
-		const { topic, deviceId, value } = this.props.securityAlerts[timestamp]
-		return generateSecurityAlertLabel({ topic, deviceId, value })
+	getAlertsCount () {
+		let count = 0
+
+		const alertsByDeviceId = this.props.securityAlerts
+		Object.keys(alertsByDeviceId).map((deviceId) => {
+			const alertsByTopics = alertsByDeviceId[deviceId]
+			Object.keys(alertsByTopics).map((topic) => {
+				count += Object.keys(alertsByTopics[topic]).length
+			})
+		})
+
+		return count
+	}
+
+	renderAlerts () {
+		const alertsByDeviceId = this.props.securityAlerts
+
+		return Object.keys(alertsByDeviceId).map((deviceId) => {
+			const alertsByTopics = alertsByDeviceId[deviceId]
+
+			/* render <li> element for every deviceId with alerts */
+			return (
+				<li key={`alerts-${deviceId}`}>
+					<span className='alert-device-id-label'># {deviceId}</span>
+					
+					{
+						/* for every topic in the securityAlerts by deviceId */
+						Object.keys(alertsByTopics).map((topic) => (
+							/* for every alert in the securityAlerts by topics */
+							Object.keys(alertsByTopics[topic]).map((timestamp) => (
+								<div>
+									<div className='alert-time'>
+									{
+										this.formatDate(timestamp)
+									}
+									</div>
+									<div className='alert-label'>
+									{
+										generateSecurityAlertLabel({
+											topic,
+											value: alertsByTopics[topic][timestamp].value
+										})
+									}
+									</div>
+								</div>
+							))
+						))
+					}
+				</li>
+			)
+		})
 	}
 
 	render () {
-		const alertsCount = Object.keys(this.props.securityAlerts).length
+		const alertsCount = this.getAlertsCount()
 		const hasAlerts = alertsCount > 0
 
 		if (hasAlerts && this.state.openned) {
@@ -59,21 +103,7 @@ class SecurityAlertsPopup extends React.Component {
 						</div>
 					</div>
 					<ul className='alerts-list'>
-						{
-							Object.keys(this.props.securityAlerts)
-								.sort()
-								.reverse()
-								.map((timestamp) => (
-									<li key={ timestamp }>
-										<div className='alert-time'>
-											{ this.formatDate(timestamp) }
-										</div>
-										<div className='alert-label'>
-											{ this.getLabel(timestamp) }
-										</div>
-									</li>
-								))
-						}
+						{ this.renderAlerts() }
 					</ul>
 				</Modal>
 			)
@@ -93,8 +123,7 @@ class SecurityAlertsPopup extends React.Component {
 }
 
 SecurityAlertsPopup.PropTypes = {
-	securityAlerts: React.PropTypes.object.isRequired,
-	onClose: React.PropTypes.func.isRequired
+	securityAlerts: React.PropTypes.object.isRequired
 }
 
 SecurityAlertsPopup.defaultProps = {

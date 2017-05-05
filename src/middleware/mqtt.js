@@ -94,6 +94,8 @@ export function* watchMqttConnect () {
 			} catch (e) {
 				if (!reconnect) {
 					/* In case of problems with logging/connecting to the broker */
+					yield put(actions.loginFailed())
+
 					yield call(fireNotification, {
 						message: 'Please check your credentials, your network connectivity and try again.',
 						title: 'Unable to connect',

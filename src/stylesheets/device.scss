@@ -63,6 +63,14 @@
 	justify-content: center;
 }
 
+.gauge-label {
+	text-align: center;
+
+	.value-span {
+		color: #000;
+	}
+}
+
 .highcharts-credits {
 	display: none;
 }

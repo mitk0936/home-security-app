@@ -31,10 +31,12 @@ class Device extends React.Component {
 		const connectionMessages = this.props.messagesByTopics[config.topics.data.connectivity]
 
 		connectionMessages && Object.keys(connectionMessages).map((timestamp) => {
-			connectionFlagsData.push({
-				x: UTCToLocalTime(timestamp),
-				title: connectionMessages[timestamp].value ? 'Online' : 'Offline'
-			})
+			if (connectionMessages[timestamp].value == 1) {
+				connectionFlagsData.push({
+					x: UTCToLocalTime(timestamp),
+					title: 'Online'
+				})
+			}
 		})
 
 		return connectionFlagsData
@@ -114,7 +116,7 @@ class Device extends React.Component {
 					x: localTime,
 					y: 100, // gasMessages[timestamp].value,
 					id: timestamp,
-					title: 'Smoke'
+					title: 'High gas level'
 				}) : null
 
 			gasSeriesData.push([localTime, gasMessages[timestamp].value ])
@@ -164,10 +166,17 @@ class Device extends React.Component {
 						</div>
 						<Timeline
 							id={`test-timeline-${deviceId}`}
-							seriesData={ [humiditySeriesData, gasSeriesData, tempSeriesData, gasFlagsData, motionFlagsData, connectionFlagsData] } />
+							seriesData={[
+								humiditySeriesData,
+								tempSeriesData,
+								gasSeriesData,
+								gasFlagsData,
+								motionFlagsData,
+								connectionFlagsData
+							]} />
 					</div>
 					<div className='gauges-container'>
-						<Gauge id={`gas-${deviceId}`} title="Smoke" metric='%'
+						<Gauge id={`gas-${deviceId}`} title="Gas level" metric='%'
 							color={config.colors.gas}
 							value={ lastGasData } />
 						<Gauge id={`${deviceId}`} title="Temperature" metric='&deg;C'

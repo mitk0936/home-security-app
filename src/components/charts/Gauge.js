@@ -1,8 +1,8 @@
 import React from 'react'
-
 import Highcharts from 'highcharts';
 import HighchartsMore from 'highcharts/highcharts-more'
 import SolidGauge from 'highcharts/modules/solid-gauge'
+import { gaugeOptions } from '../../utils/defaultGraphicsOptions'
 
 HighchartsMore(Highcharts);
 SolidGauge(Highcharts)
@@ -19,59 +19,28 @@ class Gauge extends React.Component {
 			valueSize: gaugeWidth / 15
 		}
 
-		this.gaugeOptions = {
-			chart: { type: 'solidgauge', backgroundColor: '#fff'},
-			title: {
-				text: props.title,
-				margin: 0,
-				style: { "color": "#333333", "fontSize": "12px" }
-			},
-			pane: {
-				center: ['50%', '85%'],
-				size: '160%',
-				startAngle: -100,
-				endAngle: 100,
-				background: {
-					backgroundColor: '#eee',
-					innerRadius: '60%',
-					outerRadius: '100%',
-					shape: 'arc'
+		this.gaugeOptions = Object.assign({}, gaugeOptions, {
+			title: Object.assign({}, gaugeOptions.title, {
+				text: props.title
+			}),
+			yAxis: Object.assign({}, gaugeOptions.yAxis, {
+				stops: [[0.1, props.color]]
+			}),
+			series: [{
+				name: props.id,
+				data: [0],
+				dataLabels: {
+					format: [
+						'<div class="gauge-label">',
+						`	<span class="value-span" style="font-size: ${this.state.valueSize}px">
+								{y} ${props.metric}
+							</span><br/>
+						`,
+					  	'</div>'
+					].join('')
 				}
-			},
-			tooltip: { enabled: false },
-			yAxis: {
-				stops: [[0.1, props.color]],
-				min: 0,
-				max: 100,
-				lineWidth: 0.5,
-				minorTickInterval: 2,
-				tickAmount: 1,
-				title: { y: -55 },
-				labels: { y: 16 }
-			},
-			plotOptions: {
-				solidgauge: {
-					dataLabels: {
-						y: 0,
-						borderWidth: 0,
-						useHTML: true
-					}
-				}
-			},
-			series: [
-				{
-					name: props.id,
-					data: [0],
-					dataLabels: {
-						format: [
-							'<div style="text-align:center">',
-							`	<span style="font-size: ${this.state.valueSize}px; color: #000">{y} ${props.metric}</span><br/>`,
-						  	'</div>'
-						].join('')
-					}
-				}
-			]
-		}
+			}]
+		})	
 
 		this.chart = {}
 	}
@@ -84,7 +53,7 @@ class Gauge extends React.Component {
 	}
 
 	shouldComponentUpdate () {
-		return true
+		return false
 	}
 
 	render () {

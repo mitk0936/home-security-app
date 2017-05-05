@@ -7,7 +7,6 @@ import Loader from '../components/Loader'
 import Device from '../components/Device/'
 import SecurityAlertsPopup from '../components/SecurityAlertsPopup'
 import config from '../config'
-import { clearAlerts } from '../actions'
 
 export class MainScreen extends React.Component {
 	constructor (props) {
@@ -22,8 +21,7 @@ export class MainScreen extends React.Component {
 
 	componentWillMount () {
 		/* Starting the update interval, which will update last motion label on every component, if needed.
-			interval is set to 20sec.
-		*/
+			interval is set to 20sec. */
 		this.intervalUpdate = setInterval(this.updateAllReferences, 20 * 1000) // ms
 	}
 	
@@ -103,8 +101,7 @@ export class MainScreen extends React.Component {
 					reconnecting ?
 					this.renderReconnectingOverlay() :
 					<SecurityAlertsPopup
-						securityAlerts={securityAlerts}
-						onClose={this.props.clearAlerts} />
+						securityAlerts={securityAlerts} />
 				}
 
 			</section>
@@ -126,12 +123,12 @@ MainScreen.propTypes = {
 
 function mapStateToProps (state, ownProps) {
 	return {
-		...state.data,
+		...state.messagingData,
 		reconnecting: state.user.reconnecting,
 		userAlertsSettings: state.userAlertsSettings
 	}
 }
 
 export default connect(mapStateToProps, {
-	userLogout, updateUserAlertsSettings, clearAlerts
+	userLogout, updateUserAlertsSettings
 })(MainScreen);

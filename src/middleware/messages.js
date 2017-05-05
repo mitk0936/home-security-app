@@ -13,35 +13,38 @@ export function* watchNotificationCheck () {
 		const alertSettings = yield select(userAlertsSettings)
 		if (!alertSettings[deviceId]) { return }
 
-		let alertFlag = false
+		let pushSecurityAlertFlag = false
+		const deviceLostConnection = (
+			(topic === config.topics.data.connectivity) &&
+			value == 0
+		)
 
-		/*
-			The alertFlag detects, whether if
-			a security alert is needed
-		*/
+		/* The pushSecurityAlertFlag says, whether if
+			a security alert is needed */
 		switch (topic) {
-			case config.topics.data.connectivity:
-				alertFlag = (config.sensorValuesLimits[topic] == value)
-				break;
 			case config.topics.data.motion:
 			case config.topics.data.gas:
-				alertFlag = (config.sensorValuesLimits[topic] <= value)
+				pushSecurityAlertFlag = (config.sensorValuesLimits[topic] <= value)
 		}
 
-		if (alertFlag) {
+		if (pushSecurityAlertFlag) {
 			yield put(actions.pushSecurityAlert({
 				timestamp: parseInt(timestamp, 10) * 1000, // convert to milliseconds
 				...{ deviceId, topic, value }
 			}))
+		}
 
-			/* Notify user, if the message is not retained (a new one) */
-			if (!retained) {
-				/* Open a toast message for the security alert */
-				const toastText = generateSecurityAlertLabel({topic, deviceId, value})
-				fireAToast(toastText)
-				beep(1)
-				vibrate(500)
-			}
+		/*
+			Notify user, if the security alert message is not retained (a new one)
+			or it is about connectivity and device is offline
+		*/
+
+		if (!retained && (pushSecurityAlertFlag || deviceLostConnection)) {
+			/* Open a toast message for the security alert */
+			const toastText = generateSecurityAlertLabel({topic, deviceId, value})
+			fireAToast(toastText)
+			beep(1)
+			vibrate(1500)
 		}
 	})
 }

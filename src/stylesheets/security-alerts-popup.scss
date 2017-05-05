@@ -13,7 +13,7 @@
 	text-align: center;
 	-webkit-animation: pulsate 4s ease-out;
     -webkit-animation-iteration-count: infinite;
-    border-radius: 5px;
+    border-radius: 100%;
 }
 
 .security-alert-title {
@@ -32,16 +32,6 @@
 	& > * {
 		line-height: 50px;
 	}
-
-	.clear-all-alerts {
-		flex-grow: 2;
-		text-align: center;
-		cursor: pointer;
-
-		&:active {
-			text-decoration: underline;
-		}
-	}
 }
 
 .security-alert-popup {
@@ -59,9 +49,16 @@
 		line-height: 20px;
 		border-bottom: 1px solid #ccc;
 
-		.alert-time {
+		.alert-device-id-label {
 			font-weight: bold;
-			font-size: 15px;
+		}
+		
+		.alert-time {
+			padding-left: 10px;
+		}
+
+		.alert-label {
+			padding-left: 20px;
 		}
 	}
 }
