@@ -42,7 +42,7 @@
     overflow: hidden;
 
 	ul.alerts-list li {
-		padding: 10px 20px;
+		padding: 10px;
 		display: flex;
 		flex-direction: column;
 		font-size: 13px;
@@ -51,14 +51,21 @@
 
 		.alert-device-id-label {
 			font-weight: bold;
+			font-size: 16px;
 		}
-		
+
 		.alert-time {
-			padding-left: 10px;
+			padding-left: 12px;
+			font-weight: bold;
 		}
 
 		.alert-label {
-			padding-left: 20px;
+			padding-left: 25px;
+		}
+
+		.alert-time, .alert-label {
+			border-left: 1px solid #ccc;
+			margin-left: 4px;
 		}
 	}
 }

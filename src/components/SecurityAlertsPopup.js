@@ -64,23 +64,24 @@ class SecurityAlertsPopup extends React.Component {
 						/* for every topic in the securityAlerts by deviceId */
 						Object.keys(alertsByTopics).map((topic) => (
 							/* for every alert in the securityAlerts by topics */
-							Object.keys(alertsByTopics[topic]).map((timestamp) => (
-								<div>
-									<div className='alert-time'>
-									{
-										this.formatDate(timestamp)
-									}
+							Object.keys(alertsByTopics[topic])
+								.sort()
+								.reverse()
+								.map((timestamp) => (
+									<div>
+										<div className='alert-time'>
+											{ this.formatDate(timestamp) }
+										</div>
+										<div className='alert-label'>
+										{
+											generateSecurityAlertLabel({
+												topic,
+												value: alertsByTopics[topic][timestamp].value
+											})
+										}
+										</div>
 									</div>
-									<div className='alert-label'>
-									{
-										generateSecurityAlertLabel({
-											topic,
-											value: alertsByTopics[topic][timestamp].value
-										})
-									}
-									</div>
-								</div>
-							))
+								))
 						))
 					}
 				</li>

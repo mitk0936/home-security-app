@@ -42,7 +42,7 @@ export function* watchNotificationCheck () {
 		if (!retained && (pushSecurityAlertFlag || deviceLostConnection)) {
 			/* Open a toast message for the security alert */
 			const toastText = generateSecurityAlertLabel({topic, deviceId, value})
-			fireAToast(toastText)
+			fireAToast(`${deviceId} - ${toastText}`)
 			beep(1)
 			vibrate(1500)
 		}
