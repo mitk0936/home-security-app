@@ -29,21 +29,20 @@ if (process.env.NODE_ENV !== 'production' && window.devToolsExtension) {
 	middleware = compose(middleware, window.devToolsExtension())
 }
 
-
-let userCachedData
+let localStoredUserData = {}
 
 try {
-	userCachedData = JSON.parse(window.localStorage.userCachedData)
+	localStoredUserData = JSON.parse(window.localStorage.userCachedData)
 } catch (e) {
-	userCachedData = {}
+	console.warn('Cannot get cached data from local storage.')
 }
 
 // create the store
 const store = createStore(reducers, {
 	userCachedData: {
-		username: userCachedData.username || '',
-		broker: userCachedData.broker || '',
-		port: userCachedData.port || ''
+		username: localStoredUserData.username || '',
+		broker: localStoredUserData.broker || '',
+		port: localStoredUserData.port || ''
 	}
 }, middleware)
 
