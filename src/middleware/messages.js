@@ -38,8 +38,9 @@ export function* watchNotificationCheck () {
 			Notify user, if the security alert message is not retained (a new one)
 			or it is about connectivity and device is offline
 		*/
+		const shouldFireNotification = (!retained && (pushSecurityAlertFlag || deviceLostConnection))
 
-		if (!retained && (pushSecurityAlertFlag || deviceLostConnection)) {
+		if (shouldFireNotification) {
 			/* Open a toast message for the security alert */
 			const toastText = generateSecurityAlertLabel({topic, deviceId, value})
 			fireAToast(`${deviceId} - ${toastText}`)
@@ -71,10 +72,8 @@ export function* watchDevicesStatus () {
 				
 				break;
 			case config.topics.data['temp-hum']:
-				/*
-					update device status,
-					if new temperature and humidity is detected
-				*/
+				/* update device status,
+					if new temperature and humidity is detected */
 				if (message.value) {
 					yield put(actions.setDeviceState({
 						deviceId,
@@ -87,10 +86,8 @@ export function* watchDevicesStatus () {
 
 				break;
 			case config.topics.data.gas:
-				/*
-					update device status,
-					if new gas is detected
-				*/
+				/* update device status,
+					if new gas is detected */
 				yield put(actions.setDeviceState({
 					deviceId,
 					topic,
@@ -113,7 +110,9 @@ export function* watchDevicesStatus () {
 			If the message is retained, it means that we cannot say if the device is online,
 			but if the message is about the connectivity status, we take it as truth
 		*/
-		if (!message.retained || isConnectivityMessage) {
+		const shouldUpdateConnectivityState = (!message.retained || isConnectivityMessage)
+
+		if (shouldUpdateConnectivityState) {
 			yield put(actions.setDeviceState({
 				deviceId,
 				topic: config.topics.data.connectivity,

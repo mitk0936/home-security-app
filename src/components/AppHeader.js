@@ -13,7 +13,7 @@ export class AppHeader extends React.Component {
 					Devices dashboard
 				</h1>
 				<a onClick={ this.props.userLogout } className='logout-link'>
-					Log out
+					Disconnect
 				</a>
 			</div>
 		)

@@ -2,7 +2,7 @@ import React from "react"
 import Modal from "./Modal"
 import moment from 'moment'
 import config from '../config'
-import { generateSecurityAlertLabel } from '../utils/helper'
+import { generateTopicLabel, generateSecurityAlertLabel } from '../utils/helper'
 import '../stylesheets/security-alerts-popup.scss'
 
 class SecurityAlertsPopup extends React.Component {
@@ -63,25 +63,30 @@ class SecurityAlertsPopup extends React.Component {
 					{
 						/* for every topic in the securityAlerts by deviceId */
 						Object.keys(alertsByTopics).map((topic) => (
-							/* for every alert in the securityAlerts by topics */
-							Object.keys(alertsByTopics[topic])
-								.sort()
-								.reverse()
-								.map((timestamp) => (
-									<div>
-										<div className='alert-time'>
-											{ this.formatDate(timestamp) }
-										</div>
-										<div className='alert-label'>
-										{
-											generateSecurityAlertLabel({
-												topic,
-												value: alertsByTopics[topic][timestamp].value
-											})
-										}
-										</div>
-									</div>
-								))
+							<div key={`alerts-${deviceId}-${topic}`}>
+								{ generateTopicLabel(topic) }
+								{
+									/* for every alert in the securityAlerts by topics */
+									Object.keys(alertsByTopics[topic])
+										.sort()
+										.reverse()
+										.map((timestamp) => (
+											<div key={`alerts-${deviceId}-${topic}-${timestamp}`}>
+												<div className='alert-time'>
+													{ this.formatDate(timestamp) }
+												</div>
+												<div className='alert-label'>
+													{
+														generateSecurityAlertLabel({
+															topic,
+															value: alertsByTopics[topic][timestamp].value
+														})
+													}
+												</div>
+											</div>
+										))
+								}
+							</div>
 						))
 					}
 				</li>

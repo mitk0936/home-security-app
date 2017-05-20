@@ -54,7 +54,11 @@ class Login extends React.Component {
 					value={this.state.port}
 					type='text' id='port' name='port' placeholder='Port'
 					onChange={ this.onInputChange.bind(this, 'port') } />
-				<input type='submit' value='log in'/>
+				{
+					this.props.logging ?
+						<Loader /> :
+						<input type='submit' value='connect' />
+				}
 			</form>
 		)
 	}
@@ -62,11 +66,7 @@ class Login extends React.Component {
 	render () {
 		return (
 			<div className='login-form'>
-				{
-					this.props.logging ?
-						<Loader /> :
-						this.renderForm()
-				}
+				{ this.renderForm() }
 			</div>
 		)
 	}

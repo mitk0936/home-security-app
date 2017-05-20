@@ -51,6 +51,7 @@ class Timeline extends React.Component {
 				tooltip: { xDateFormat: '%Y, %d %B %H:%M' },
 				data: [],
 				color: '#777',
+				shape: 'squarepin',
 				y: 10
 			}, {
 				type: 'flags',
@@ -73,7 +74,14 @@ class Timeline extends React.Component {
 	}
 
 	componentWillReceiveProps (nextProps) {
-		/* Update series data */
+		const dataHasChanged = (
+			JSON.stringify(nextProps) !==
+			JSON.stringify(this.props)
+		)
+
+		if (!dataHasChanged) { return }
+
+		/* Update series data if some data has changed */
 		for (let i = 0; i < nextProps.seriesData.length; i++) {
 			this.chart.series[i].setData(nextProps.seriesData[i])
 		}
