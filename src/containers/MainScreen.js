@@ -108,6 +108,10 @@ export class MainScreen extends React.Component {
 		)
 	}
 
+	/*
+		Clearing the object with device references,
+		when the main screen unmounts
+	*/
 	componentWillUnmount () {
 		this.deviceReferences = {}
 	}
@@ -118,7 +122,8 @@ MainScreen.propTypes = {
 	messages: React.PropTypes.object.isRequired,
 	securityAlerts: React.PropTypes.object.isRequired,
 	userLogout: React.PropTypes.func.isRequired,
-	userAlertsSettings: React.PropTypes.object.isRequired
+	userAlertsSettings: React.PropTypes.object.isRequired,
+	updateUserAlertsSettings: React.PropTypes.func.isRequired
 }
 
 function mapStateToProps (state, ownProps) {

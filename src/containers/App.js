@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-
+import Notifications from 'react-notify-toast'
 import '../stylesheets/app.scss'
 
 export class App extends React.Component {
@@ -11,6 +11,7 @@ export class App extends React.Component {
 		return (
 			<div className='app-container'>
 				{ this.props.children }
+				<Notifications />
 			</div>
 		)
 	}

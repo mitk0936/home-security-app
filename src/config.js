@@ -19,7 +19,8 @@ const config = {
 		humidity: '#3498db',
 		gas: '#7f8c8d',
 		motion: '#c0392b',
-		connectivity: '#34495e'
+		connectivity: '#34495e',
+		danger: '#e74c3c'
 	},
 	sensorValuesLimits: {
 		'connectivity': 0,

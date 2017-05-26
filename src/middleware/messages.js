@@ -43,7 +43,7 @@ export function* watchNotificationCheck () {
 		if (shouldFireNotification) {
 			/* Open a toast message for the security alert */
 			const toastText = generateSecurityAlertLabel({topic, deviceId, value})
-			fireAToast(`${deviceId} - ${toastText}`)
+			fireAToast(`#${deviceId} - ${toastText}`)
 			beep(1)
 			vibrate(1500)
 		}

@@ -78,7 +78,8 @@ Login.propTypes = {
 		username: React.PropTypes.string.isRequired,
 		broker: React.PropTypes.string.isRequired,
 		port: React.PropTypes.string.isRequired
-	})
+	}),
+	connectMqtt: React.PropTypes.func.isRequired
 }
 
 function mapStateToProps (state) {

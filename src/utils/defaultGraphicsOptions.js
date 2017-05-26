@@ -88,3 +88,8 @@ export const timelineOptions = {
 		}
 	}
 }
+
+export const toastBrowserStyles = {
+	background: '#0E1717',
+	text: "#FFFFFF"
+}

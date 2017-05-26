@@ -5,9 +5,7 @@ const OnOffSwitch = ({id, checked, onChange}) => {
 	return (
 		<div className="onoffswitch">
 			<input
-				onChange={(e) => {
-					onChange(!checked)
-				}}
+				onChange={ (e) => onChange(!checked) }
 				type="checkbox"
 				name="onoffswitch"
 				className="onoffswitch-checkbox"

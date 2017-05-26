@@ -1,10 +1,11 @@
 import * as actions from '../actions'
 
-export const userCachedData = (state = {
+export const defaultCachedState = {
 	username: '',
 	broker: '',
 	port: ''
-}, action) => {
+}
+export const userCachedData = (state = defaultCachedState, action) => {
 	switch (action.type) {
 		case actions.USER_LOGGED:
 			return Object.assign({}, {

@@ -1,3 +1,8 @@
+import { notify } from 'react-notify-toast'
+import { toastBrowserStyles } from '../utils/defaultGraphicsOptions'
+
+notify.show = notify.createShowQueue()
+
 /*
 	Opens an alert message with OK button,
 	to show a mesage
@@ -52,6 +57,8 @@ export const fireAToast = (message) => {
 	try {
 		window.plugins.toast.showLongBottom(message)
 	} catch (e) {
-		console.error('Toasts are not supported.')
+		notify.show(message, "custom", 7000, toastBrowserStyles)
 	}
 }
+
+window.fireAToast = fireAToast

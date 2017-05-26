@@ -21,10 +21,8 @@ class SecurityAlertsPopup extends React.Component {
 		)
 	}
 
-	toggle (state) {
-		this.setState({
-			openned: state
-		})
+	toggle (openned) {
+		this.setState({ openned })
 	}
 
 	formatDate (timestamp) {
@@ -107,6 +105,9 @@ class SecurityAlertsPopup extends React.Component {
 						<div>
 							Security Alerts ({alertsCount})
 						</div>
+						<span
+							onClick={ this.toggle.bind(this, false) }
+							className='close-button'></span>
 					</div>
 					<ul className='alerts-list'>
 						{ this.renderAlerts() }

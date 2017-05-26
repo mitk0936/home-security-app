@@ -57,4 +57,16 @@ input {
 			color: #fff;
 		}
 	}
-} 
+}
+
+.toast-notification {
+	bottom: 120px !important;
+	top: auto !important;
+	width: auto !important;
+	
+	.custom {
+		font-size: 12px !important;
+		border-radius: 20px !important;
+		padding: 5px 10px !important;
+	}
+}

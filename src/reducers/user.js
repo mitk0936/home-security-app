@@ -1,7 +1,7 @@
 import * as actions from '../actions'
 import config from '../config'
 
-const defaultState = {
+export const defaultState = {
 	username: null,
 	logged: false,
 	reconnecting: false,

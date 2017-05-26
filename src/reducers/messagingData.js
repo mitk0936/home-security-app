@@ -1,6 +1,5 @@
 import * as actions from '../actions'
 import config from '../config'
-import { removeByKey } from '../utils/helper'
 
 const defaultDeviceState = {
 	[config.topics.data.connectivity]: false,
@@ -31,6 +30,10 @@ export default function messagingData (state = defaultState, action) {
 				devicesState: Object.assign({}, state.devicesState, {
 					[deviceId]: deviceData
 				}),
+				/*
+					Updating the messages structure
+					[deviceId][topic][timestamp] -> { value, timestamp, retained }
+				*/
 				messages: Object.assign({}, state.messages, {
 					[deviceId]: Object.assign({}, messagesByTopic, {
 						[topic]: Object.assign({}, messagesByTopic[topic], {

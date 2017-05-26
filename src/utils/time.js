@@ -1,8 +1,10 @@
-const timeOffset = -((new Date()).getTimezoneOffset()/60)
-
 export const UTCToLocalTime = (timestamp) => {
-	const d = new Date(0)
-	d.setUTCSeconds(timestamp)
-	d.setHours(d.getHours() + timeOffset)
-	return d.getTime()
+	/* Take the offset of the current timezone in hours */
+	const hoursTimeOffset = -((new Date()).getTimezoneOffset()/60)
+
+	const convertedDate = new Date(0)
+	convertedDate.setUTCSeconds(timestamp)
+	/* adding the offset to the UTC timestamp */
+	convertedDate.setHours(convertedDate.getHours() + hoursTimeOffset)
+	return convertedDate.getTime()
 }

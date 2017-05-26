@@ -7,7 +7,7 @@ class Timeline extends React.Component {
 	constructor(props) {
 		super(props)
 		
-		this.options = Object.assign({}, timelineOptions, {
+		this.timelineOptions = Object.assign({}, timelineOptions, {
 			chart: Object.assign({}, timelineOptions.chart, {
 				renderTo: `timeline-${props.id}`
 			}),
@@ -64,7 +64,7 @@ class Timeline extends React.Component {
 			}, {
 				type: 'flags',
 				id: 'connection-flags',
-				name: 'Device went online',
+				name: 'Connectivity',
 				tooltip: { xDateFormat: '%Y, %d %B %H:%M' },
 				data: [],
 				color: config.colors.connectivity,
@@ -100,7 +100,7 @@ class Timeline extends React.Component {
 	}
 
 	componentDidMount () {
-		this.chart = HighStock.chart(this.options)
+		this.chart = HighStock.chart(this.timelineOptions)
 	}
 
 	componentWillUnmount () {

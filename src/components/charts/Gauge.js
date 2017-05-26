@@ -3,6 +3,7 @@ import Highcharts from 'highcharts';
 import HighchartsMore from 'highcharts/highcharts-more'
 import SolidGauge from 'highcharts/modules/solid-gauge'
 import { gaugeOptions } from '../../utils/defaultGraphicsOptions'
+import config from '../../config'
 
 HighchartsMore(Highcharts);
 SolidGauge(Highcharts)
@@ -19,12 +20,22 @@ class Gauge extends React.Component {
 			valueSize: gaugeWidth / 15
 		}
 
+		const plotBands = props.dangerMinValue ? [{
+			from: props.dangerMinValue,
+			to: 100,
+			borderWidth: 2,
+			borderColor: config.colors.danger,
+			color: config.colors.danger,
+			zIndex: 100
+		}]: []
+
 		this.gaugeOptions = Object.assign({}, gaugeOptions, {
 			title: Object.assign({}, gaugeOptions.title, {
 				text: props.title
 			}),
 			yAxis: Object.assign({}, gaugeOptions.yAxis, {
-				stops: [[0.1, props.color]]
+				stops: [[0.1, props.color]],
+				plotBands
 			}),
 			series: [{
 				name: props.id,
@@ -80,7 +91,8 @@ Gauge.propTypes = {
 	id: React.PropTypes.string.isRequired,
 	title: React.PropTypes.string.isRequired,
 	metric: React.PropTypes.string.isRequired,
-	color: React.PropTypes.string
+	color: React.PropTypes.string,
+	dangerMinValue: React.PropTypes.number
 }
 
 export default Gauge

@@ -28,6 +28,7 @@
 	display: flex;
 	align-items: center;
 	background-color: #eee;
+	position: relative;
 
 	& > * {
 		line-height: 50px;
@@ -68,6 +69,28 @@
 			margin-left: 4px;
 		}
 	}
+}
+
+.close-button {
+	cursor:pointer;
+    color: #605F61;
+    font-size: 31px;
+    font-weight: bold;
+    display: block;
+    right:0;
+    top:0;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+
+    &:before {	
+    	display: block;
+    	line-height: 30px;
+    	position: absolute;
+    	right: 10px;
+    	top: 10px;
+    	content: "×";
+    }
 }
 
 @-webkit-keyframes pulsate {

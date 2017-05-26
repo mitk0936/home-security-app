@@ -31,10 +31,13 @@ class Device extends React.Component {
 		const connectionMessages = this.props.messagesByTopics[config.topics.data.connectivity]
 
 		connectionMessages && Object.keys(connectionMessages).map((timestamp) => {
-			if (connectionMessages[timestamp].value == 1) {
+			const messageNotRetained = !connectionMessages[timestamp].retained
+			const isOnlineMessage = connectionMessages[timestamp].value == 1
+
+			if (isOnlineMessage || messageNotRetained) {
 				connectionFlagsData.push({
 					x: UTCToLocalTime(timestamp),
-					title: 'Online'
+					title: isOnlineMessage ? 'Online' : 'Offline'
 				})
 			}
 		})
@@ -177,6 +180,7 @@ class Device extends React.Component {
 					</div>
 					<div className='gauges-container'>
 						<Gauge id={`gas-${deviceId}`} title="Gas level" metric='%'
+							dangerMinValue={ config.sensorValuesLimits.gas }
 							color={config.colors.gas}
 							value={ lastGasData } />
 						<Gauge id={`${deviceId}`} title="Temperature" metric='&deg;C'

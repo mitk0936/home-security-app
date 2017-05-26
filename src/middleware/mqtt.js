@@ -6,6 +6,7 @@ import { user } from '../selectors'
 import config from '../config'
 import { fireNotification } from '../services/notificationService'
 import { pahoMqttConnect } from '../services/mqttConnect'
+import moment from 'moment'
 
 /* 
 	A callback from PahoMQTT
@@ -25,7 +26,7 @@ const onMessageArrived = (message) => {
 			deviceId,
 			topic,
 			message: {
-				...{ timestamp: '0' },
+				...{ timestamp: moment().utc().unix() },
 				...JSON.parse(message.payloadString),
 				retained
 			}
