@@ -21,6 +21,10 @@ const onMessageArrived = (message) => {
 	const topic = topicData[1]
 	
 	try {
+		/* if the deviceId is specified in the topic,
+			and the topic is declared in the config file,
+			dispatch the new message
+		 */
 		deviceId && config.topics.data[topic] &&
 		store.dispatch(actions.messageArrived({
 			deviceId,
@@ -36,15 +40,81 @@ const onMessageArrived = (message) => {
 	}
 }
 
-/* 
-	A callback from PahoMQTT
-	Caled when connectivity is lost by the broker
-*/
+/* A callback from PahoMQTT
+	Caled when connectivity is lost by the broker */
 const onConnectionLost = () => store.dispatch(actions.connectionLost())
 
+const userConnect = function* ({ username, password, broker, port }) {
+	/* Making an attempt to connect to the MQTT broker,
+		client is returned as a result */
+	const { client } = yield call(
+		pahoMqttConnect,
+		{ username, password, broker, port },
+		onMessageArrived,
+		onConnectionLost
+	)
 
-/* Caled when connectivity is lost or user logout */
+	yield put(actions.userLogged({ username, broker, port }))
+	client.subscribe('#') /* User is connected, subscribe the client to all available data for his account */
+
+	return client
+}
+
+const watchUserDisconnect = function* ({ username, password, broker, port }, client) {
+	/* Waiting for the next action:
+		- connection lost -> attempt to reconnect
+		- user logout -> go to home screen */
+	const { type } = yield take([
+		actions.CONNECTION_LOST,
+		actions.USER_LOGOUT
+	])
+
+	switch (type) {
+		case actions.CONNECTION_LOST:
+			yield put(actions.connectMqtt({ username, password, broker, port, reconnect: true }));
+			break;
+		case actions.USER_LOGOUT:
+			yield call(disconnect, client)
+	}
+}
+
+const notifyUserForLoginFail = function* () {
+	/* In case of problems with logging/connecting to the broker */
+	yield put(actions.loginFailed())
+
+	yield call(fireNotification, {
+		message: 'Please check your credentials, your network connectivity and try again.',
+		title: 'Unable to connect',
+		buttonText: 'OK'
+	})
+}
+
+const attempToReconnect = function* ({ username, password, broker, port }) {
+	/* In case of problems with logging/connecting to the broker
+		during attempts for re-connect */
+	yield call(delay, 2000)
+	yield put(actions.connectMqtt({
+		username, password, broker, port, reconnect: true
+	}))
+}
+
+const notifyUserForLostConnection = function* () {
+	/* All attempts for reconnect failed
+			The user has lost connectivity */
+	yield call(fireNotification, {
+		message: 'Ooops. Looks like you lost network connectivity.',
+		title: 'Network Problem',
+		buttonText: 'OK'
+	}, 2, 2000)
+		
+
+	yield(put(actions.userLogout()))
+	yield call(disconnect)
+}
+
+
 const disconnect = function* (client) {
+	/* Caled when connectivity is lost or user logout */
 	client && client.disconnect()
 	yield put(actions.navigate(config.paths.login))
 }
@@ -60,77 +130,24 @@ export function* watchMqttConnect () {
 		const allowedToReconnect = (reconnect && reconnectsLeft > 0)
 
 		if (!reconnect || allowedToReconnect) {
+			
 			try {
-				/* Making an attempt to connect to the MQTT broker,
-					client is returned as a result */
-				const { client } = yield call(
-					pahoMqttConnect,
-					{ username, password, broker, port },
-					onMessageArrived,
-					onConnectionLost
-				)
-				
-				yield put(actions.userLogged({ username, broker, port }))
-
-				/* User is connected, subscribe the client to all
-					available data for his account */
-				client.subscribe('#')
+				const client = yield call(userConnect, { username, password, broker, port })
 				reconnectsLeft = config.mqtt.allowedReconnects
+				yield call(watchUserDisconnect, { username, password, broker, port }, client)
 
-				/* Waiting for the next action:
-					- connection lost -> attempt to reconnect
-					- user logout -> go to home screen */
-				const { type } = yield take([
-					actions.CONNECTION_LOST,
-					actions.USER_LOGOUT
-				])
-
-				switch (type) {
-					case actions.CONNECTION_LOST:
-						yield put(actions.connectMqtt({ username, password, broker, port, reconnect: true }));
-						break;
-					case actions.USER_LOGOUT:
-						yield call(disconnect, client)
-				}
 			} catch (e) {
-				if (!reconnect) {
-					/* In case of problems with logging/connecting to the broker */
-					yield put(actions.loginFailed())
-
-					yield call(fireNotification, {
-						message: 'Please check your credentials, your network connectivity and try again.',
-						title: 'Unable to connect',
-						buttonText: 'OK'
-					})
-					return
+				if (reconnect) {
+					reconnectsLeft--
+					yield call(attempToReconnect, { username, password, broker, port })
+				} else {
+					yield call(notifyUserForLoginFail)
 				}
-
-				/*
-					In case of problems with logging/connecting to the broker
-					during attempts for re-connect
-				*/
-				yield call(delay, 2000)
-				reconnectsLeft--
-				yield put(actions.connectMqtt({
-					username, password, broker, port, reconnect: true
-				}))
 			}
-			
-			return
-		}
 
-		/*
-			All attempts for reconnect failed
-			The user has lost connectivity
-		*/
-		yield call(fireNotification, {
-			message: 'Ooops. Looks like you lost network connectivity.',
-			title: 'Network Problem',
-			buttonText: 'OK'
-		}, 2, 2000)
-			
-		reconnectsLeft = config.mqtt.allowedReconnects
-		yield(put(actions.userLogout()))
-		yield call(disconnect)
+		} else {
+			reconnectsLeft = config.mqtt.allowedReconnects
+			yield call(notifyUserForLostConnection)
+		}
 	})
 }

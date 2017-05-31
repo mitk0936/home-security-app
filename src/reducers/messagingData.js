@@ -1,7 +1,7 @@
 import * as actions from '../actions'
 import config from '../config'
 
-const defaultDeviceState = {
+export const defaultDeviceState = {
 	[config.topics.data.connectivity]: false,
 	[config.topics.data.motion]: null,
 	[config.topics.data['temp-hum']]: {
@@ -11,7 +11,7 @@ const defaultDeviceState = {
 	[config.topics.data.gas]: 0
 }
 
-const defaultState = {
+export const defaultState = {
 	messages: {},
 	devicesState: {},
 	securityAlerts: {}
@@ -43,6 +43,7 @@ export default function messagingData (state = defaultState, action) {
 				})
 			})
 		case actions.SET_DEVICE_STATE:
+			/* Updating the device state in the Application Store */
 			return Object.assign({}, state, {
 				devicesState: Object.assign({}, state.devicesState, {
 					[action.deviceId]: Object.assign({}, state.devicesState[action.deviceId], {

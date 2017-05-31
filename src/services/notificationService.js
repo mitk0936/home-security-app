@@ -57,6 +57,7 @@ export const fireAToast = (message) => {
 	try {
 		window.plugins.toast.showLongBottom(message)
 	} catch (e) {
+		/* Fallback to browser toast message */
 		notify.show(message, "custom", 7000, toastBrowserStyles)
 	}
 }

@@ -1,6 +1,6 @@
 const config = {
 	mqtt: {
-		allowedReconnects: 10
+		allowedReconnects: 40
 	},
 	paths: {
 		login: '/',
@@ -25,7 +25,7 @@ const config = {
 	sensorValuesLimits: {
 		'connectivity': 0,
 		'motion': 1,
-		'gas': 47
+		'gas': 55
 	}
 }
 

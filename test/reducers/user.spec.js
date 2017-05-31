@@ -3,6 +3,7 @@ import user from '../../src/reducers/user'
 import { defaultState } from '../../src/reducers/user'
 
 describe('Testing the user reducer', function () {
+
 	it('should update properly the logging flag on CONNECT_MQTT action', function () {
 		const mockedAction = {
 			type: 'CONNECT_MQTT',

@@ -34,20 +34,71 @@ export function* watchNotificationCheck () {
 			}))
 		}
 
-		/*
-			Notify user, if the security alert message is not retained (a new one)
-			or it is about connectivity and device is offline
-		*/
+		/* Notify user, if the security alert message is not retained (a new one)
+			or it is about connectivity and device is offline */
 		const shouldFireNotification = (!retained && (pushSecurityAlertFlag || deviceLostConnection))
 
 		if (shouldFireNotification) {
 			/* Open a toast message for the security alert */
-			const toastText = generateSecurityAlertLabel({topic, deviceId, value})
+			const toastText = generateSecurityAlertLabel({ topic, deviceId, value })
 			fireAToast(`#${deviceId} - ${toastText}`)
 			beep(1)
 			vibrate(1500)
 		}
 	})
+}
+
+const updateDeviceConnectivityState = function* ({ deviceId, topic, message }) {
+	/* The device is connected if we receive messages from it
+		and the message is not about that the device lost connection  */
+	const isConnectivityMessage = (topic === config.topics.data.connectivity)
+	const deviceIsConnected = !(isConnectivityMessage && message.value === 0)
+
+	/*
+		If the message is retained, it means that we cannot say if the device is online,
+		but if the message is about the connectivity status, we take it as truth
+	*/
+	const shouldUpdateConnectivityState = (!message.retained || isConnectivityMessage)
+
+	if (shouldUpdateConnectivityState) {
+		yield put(actions.setDeviceState({
+			deviceId,
+			topic: config.topics.data.connectivity,
+			value: deviceIsConnected,
+			retained: message.retained,
+			timestamp: message.timestamp
+		}))
+	}
+}
+
+const updateDeviceState = function* ({ deviceId, topic, message }) {
+	switch (topic) {
+		case config.topics.data.motion:
+			/* update device status for new motion detected */
+			if (message.value === config.sensorValuesLimits.motion) {
+				yield put(actions.setDeviceState({ deviceId, topic,
+					value: message.timestamp,
+					retained: message.retained,
+					timestamp: message.timestamp
+				}))
+			}
+			
+			break;
+		case config.topics.data['temp-hum']:
+			/* update device status,
+				if new temperature and humidity is measured */
+			if (message.value) {
+				yield put(actions.setDeviceState({ deviceId, topic, ...message }))
+			}
+
+			break;
+		case config.topics.data.gas:
+			/* update device status,
+				if new gas is detected */
+			yield put(actions.setDeviceState({ deviceId, topic, ...message }))
+
+			break;
+	}
 }
 
 /*
@@ -57,69 +108,7 @@ export function* watchDevicesStatus () {
 	while (true) {
 		const { deviceId, topic, message } = yield take(actions.MESSAGE_ARRIVED)
 
-		switch (topic) {
-			case config.topics.data.motion:
-				/* update device status for new motion detected */
-				if (message.value === config.sensorValuesLimits.motion) {
-					yield put(actions.setDeviceState({
-						deviceId,
-						topic,
-						value: message.timestamp,
-						retained: message.retained,
-						timestamp: message.timestamp
-					}))
-				}
-				
-				break;
-			case config.topics.data['temp-hum']:
-				/* update device status,
-					if new temperature and humidity is detected */
-				if (message.value) {
-					yield put(actions.setDeviceState({
-						deviceId,
-						topic,
-						value: message.value,
-						retained: message.retained,
-						timestamp: message.timestamp
-					}))
-				}
-
-				break;
-			case config.topics.data.gas:
-				/* update device status,
-					if new gas is detected */
-				yield put(actions.setDeviceState({
-					deviceId,
-					topic,
-					value: message.value,
-					retained: message.retained,
-					timestamp: message.timestamp
-				}))
-
-				break;
-		}
-
-		/* 
-			The device is connected if we receive messages from it
-			and the message is not about that the device lost connection 
-		*/
-		const isConnectivityMessage = (topic === config.topics.data.connectivity)
-		const deviceIsConnected = !(isConnectivityMessage && message.value === 0)
-
-		/*
-			If the message is retained, it means that we cannot say if the device is online,
-			but if the message is about the connectivity status, we take it as truth
-		*/
-		const shouldUpdateConnectivityState = (!message.retained || isConnectivityMessage)
-
-		if (shouldUpdateConnectivityState) {
-			yield put(actions.setDeviceState({
-				deviceId,
-				topic: config.topics.data.connectivity,
-				value: deviceIsConnected,
-				retained: message.retained,
-				timestamp: message.timestamp
-			}))
-		}
+		yield call(updateDeviceState, { deviceId, topic, message })
+		yield call(updateDeviceConnectivityState, { deviceId, topic, message })
 	}
 }	

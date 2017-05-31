@@ -14,12 +14,13 @@ import config from '../config'
 	the data is cached by username.
 */
 export function* watchUpdateUserAlertsSettings () {
-	yield takeEvery(actions.UPDATE_USER_ALERTS_SETTINGS, function* ({ deviceId, flag }) {
+	yield takeEvery(actions.UPDATE_USER_ALERTS_SETTINGS, function* () {
 		const { username } = yield select(user)
 		const userSettings = yield select(userAlertsSettings)
 
 		const currentSettings = JSON.parse(window.localStorage.userAlertsSettings)
 
+		/* update the user settings in the WebView local storage */
 		window.localStorage.userAlertsSettings = JSON.stringify(Object.assign({}, currentSettings, {
 			[username]: userSettings
 		}))
