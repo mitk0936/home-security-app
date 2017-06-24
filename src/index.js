@@ -18,7 +18,7 @@ const render = () => {
 	)
 }
 
-/* Detects if the application is runnging inside Cordova */
+/* Detects if the application is running inside Cordova */
 const isRunningCordova = document.URL.indexOf( 'http' ) === -1;
 
 if (isRunningCordova) {

@@ -61,5 +61,3 @@ export const fireAToast = (message) => {
 		notify.show(message, "custom", 7000, toastBrowserStyles)
 	}
 }
-
-window.fireAToast = fireAToast

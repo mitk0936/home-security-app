@@ -1,6 +1,6 @@
 const config = {
 	mqtt: {
-		allowedReconnects: 40
+		allowedReconnects: 30
 	},
 	paths: {
 		login: '/',

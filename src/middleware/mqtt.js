@@ -54,9 +54,6 @@ const userConnect = function* ({ username, password, broker, port }) {
 		onConnectionLost
 	)
 
-	yield put(actions.userLogged({ username, broker, port }))
-	client.subscribe('#') /* User is connected, subscribe the client to all available data for his account */
-
 	return client
 }
 
@@ -79,23 +76,11 @@ const watchUserDisconnect = function* ({ username, password, broker, port }, cli
 }
 
 const notifyUserForLoginFail = function* () {
-	/* In case of problems with logging/connecting to the broker */
-	yield put(actions.loginFailed())
-
 	yield call(fireNotification, {
 		message: 'Please check your credentials, your network connectivity and try again.',
 		title: 'Unable to connect',
 		buttonText: 'OK'
 	})
-}
-
-const attempToReconnect = function* ({ username, password, broker, port }) {
-	/* In case of problems with logging/connecting to the broker
-		during attempts for re-connect */
-	yield call(delay, 2000)
-	yield put(actions.connectMqtt({
-		username, password, broker, port, reconnect: true
-	}))
 }
 
 const notifyUserForLostConnection = function* () {
@@ -106,10 +91,6 @@ const notifyUserForLostConnection = function* () {
 		title: 'Network Problem',
 		buttonText: 'OK'
 	}, 2, 2000)
-		
-
-	yield(put(actions.userLogout()))
-	yield call(disconnect)
 }
 
 
@@ -130,24 +111,33 @@ export function* watchMqttConnect () {
 		const allowedToReconnect = (reconnect && reconnectsLeft > 0)
 
 		if (!reconnect || allowedToReconnect) {
-			
 			try {
 				const client = yield call(userConnect, { username, password, broker, port })
+				yield put(actions.userLogged({ username, broker, port }))
+				
+				/* User is connected, subscribe the client to all available data for his account */
+				client.subscribe('#') 
+
 				reconnectsLeft = config.mqtt.allowedReconnects
 				yield call(watchUserDisconnect, { username, password, broker, port }, client)
-
 			} catch (e) {
 				if (reconnect) {
 					reconnectsLeft--
-					yield call(attempToReconnect, { username, password, broker, port })
+					yield call(delay, 2000)
+
+					yield put(actions.connectMqtt({
+						username, password, broker, port, reconnect: true
+					}))
 				} else {
+					/* In case of problems with logging/connecting to the broker */
+					yield put(actions.loginFailed())
 					yield call(notifyUserForLoginFail)
 				}
 			}
-
 		} else {
-			reconnectsLeft = config.mqtt.allowedReconnects
 			yield call(notifyUserForLostConnection)
+			yield put(actions.userLogout())
+			yield call(disconnect)
 		}
 	})
 }

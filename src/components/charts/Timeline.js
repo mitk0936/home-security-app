@@ -91,8 +91,7 @@ class Timeline extends React.Component {
 
 	shouldComponentUpdate () {
 		/* Prevent pre-render of the component.
-			The chart is updated in componentWillReceiveProps()
-		*/
+			The chart is updated in componentWillReceiveProps() */
 		return false
 	}
 

@@ -54,10 +54,8 @@ const updateDeviceConnectivityState = function* ({ deviceId, topic, message }) {
 	const isConnectivityMessage = (topic === config.topics.data.connectivity)
 	const deviceIsConnected = !(isConnectivityMessage && message.value === 0)
 
-	/*
-		If the message is retained, it means that we cannot say if the device is online,
-		but if the message is about the connectivity status, we take it as truth
-	*/
+	/* If the message is retained, it means that we cannot say if the device is online,
+		but if the message is about the connectivity status, we take it as truth */
 	const shouldUpdateConnectivityState = (!message.retained || isConnectivityMessage)
 
 	if (shouldUpdateConnectivityState) {
