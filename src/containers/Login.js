@@ -89,4 +89,4 @@ const mapStateToProps = (state) => {
 	}
 }
 
-export default connect(mapStateToProps, { connectMqtt })(Login)
+export default connect(mapStateToProps, { connectMqtt })(Login);
