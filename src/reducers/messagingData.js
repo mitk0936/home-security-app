@@ -14,7 +14,7 @@ export const defaultDeviceState = {
 export const defaultState = {
 	messages: {},
 	devicesState: {},
-	securityAlerts: {}
+	securityAlertzs: {}
 }
 
 export default function messagingData (state = defaultState, action) {
