@@ -82,7 +82,7 @@ Login.propTypes = {
 	connectMqtt: React.PropTypes.func.isRequired
 }
 
-function mapStateToProps (state) {
+const mapStateToProps = (state) => {
 	return {
 		logging: state.user.logging,
 		userCachedData: state.userCachedData
