@@ -12,7 +12,7 @@ class Gauge extends React.Component {
 	constructor (props) {
 		super(props)
 
-		const gaugeWidth = 180
+		const gaugeWidth = 160;
 
 		this.state = {
 			gaugeWidth,
@@ -51,7 +51,7 @@ class Gauge extends React.Component {
 					].join('')
 				}
 			}]
-		})	
+		})
 
 		this.chart = {}
 	}

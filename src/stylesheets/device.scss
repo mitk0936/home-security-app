@@ -56,7 +56,7 @@
 }
 
 .gauges-container {
-	width: 180px;
+	width: 160px;
 	border-left: 1px solid #ccc;
 	display: flex;
 	flex-direction: column;
@@ -81,7 +81,7 @@
 
 .gauge {
 	border-bottom: 1px solid #ccc;
-	
+
 	&:last-child {
 		border: 0
 	}
